@@ -2,502 +2,102 @@
 
 [ext_resource type="Script" uid="uid://3ckc0l0hsnnd" path="res://scripts/main.gd" id="1_elqb8"]
 [ext_resource type="Script" uid="uid://cq48bvhgvh75w" path="res://scripts/world_gen.gd" id="2_vcsgt"]
+[ext_resource type="PackedScene" uid="uid://d10wy5c5rnn4l" path="res://scenes/Player.tscn" id="3_bjd11"]
 [ext_resource type="PackedScene" uid="uid://3k4x2sbg27va" path="res://scenes/furnace.tscn" id="3_nfivy"]
 [ext_resource type="PackedScene" uid="uid://d2uu27jqlokh2" path="res://scenes/anvil.tscn" id="4_1nqs0"]
-[ext_resource type="Script" uid="uid://b7vqohdm1bsed" path="res://scripts/player.gd" id="4_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://bjjty4bon8amv" path="res://scenes/inventory.tscn" id="4_rarhs"]
-[ext_resource type="Script" uid="uid://d1ghtt2qmd6v7" path="res://scripts/player_model.gd" id="5_cvmbd"]
-[ext_resource type="Texture2D" uid="uid://bwf826nej6iyb" path="res://assets/Textures/player/Body.png" id="6_ft6cd"]
-[ext_resource type="Texture2D" uid="uid://cufdutbwm6vdm" path="res://assets/Textures/player/Front Arm.png" id="7_bb450"]
+[ext_resource type="PackedScene" uid="uid://brhhk6wuhyilj" path="res://scenes/crafting_table.tscn" id="6_qmy6f"]
 [ext_resource type="Script" uid="uid://k0r6rl1k2sdo" path="res://scripts/hotbar_hud.gd" id="8_1iba3"]
-[ext_resource type="Texture2D" uid="uid://co8gm5bgb3pc5" path="res://assets/Textures/player/Back Arm.png" id="8_nfivy"]
-[ext_resource type="Texture2D" uid="uid://lpcm2tso1nhx" path="res://assets/Textures/player/Front Leg.png" id="9_1nqs0"]
 [ext_resource type="Texture2D" uid="uid://bn6gf3ts6espc" path="res://assets/Textures/gui/hotbar.png" id="9_yxlcp"]
-[ext_resource type="Texture2D" uid="uid://bkdchkhb7r6jo" path="res://assets/Textures/player/Back Leg.png" id="10_1iba3"]
 [ext_resource type="Script" uid="uid://bnfym47bap42a" path="res://scripts/stats_hud.gd" id="10_ebg2g"]
 [ext_resource type="Texture2D" uid="uid://1q00ta86ele6" path="res://assets/Textures/gui/icons.png" id="11_2ofn6"]
-[ext_resource type="Texture2D" uid="uid://ynplf07e1kby" path="res://assets/Textures/player/head.png" id="11_yxlcp"]
-[ext_resource type="Script" uid="uid://c0cywr2cqkhhx" path="res://scripts/block_interaction.gd" id="12_ebg2g"]
-[ext_resource type="PackedScene" uid="uid://01vca2xeeoco" path="res://scenes/block_drop.tscn" id="13_2ofn6"]
-[ext_resource type="PackedScene" uid="uid://c2j32w08dpiwm" path="res://scenes/block_break_effect.tscn" id="14_xa025"]
-[ext_resource type="Script" uid="uid://bidr3hk25k411" path="res://scripts/crafting_table_ui.gd" id="15_cvmbd"]
-[ext_resource type="Texture2D" uid="uid://nbjjggwpk4cm" path="res://assets/Textures/gui/crafting_table.png" id="16_ft6cd"]
 [ext_resource type="Texture2D" uid="uid://cmwnehsf8rvlv" path="res://assets/Textures/blocks/destroy_indicate.png" id="17_ft6cd"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_d3wef"]
-size = Vector2(8, 63)
-
-[node name="Node2D" type="Node2D" unique_id=927987656]
+[node name="Node2D" type="Node2D" unique_id=336726014]
 script = ExtResource("1_elqb8")
 
-[node name="World Gen" type="Node" parent="." unique_id=392885909 groups=["world_gen"]]
+[node name="WorldGen" type="Node" parent="." unique_id=1089963073]
 script = ExtResource("2_vcsgt")
-far_bg_y_offset = 4
 
-[node name="Furnace UI" parent="." unique_id=1913848886 instance=ExtResource("3_nfivy")]
+[node name="Player" parent="." unique_id=632806575 instance=ExtResource("3_bjd11")]
 
-[node name="Anvil UI" parent="." unique_id=650324163 instance=ExtResource("4_1nqs0")]
+[node name="BlockInteraction" parent="Player" index="3" unique_id=1244212651 node_paths=PackedStringArray("crafting_table_ui", "furnace_ui", "anvil_ui")]
+break_indicator_texture = ExtResource("17_ft6cd")
+crafting_table_ui = NodePath("../../Crafting Table/Control")
+furnace_ui = NodePath("../../Furnace/Control")
+anvil_ui = NodePath("../../Anvil/Control")
 
-[node name="Crafting Table UI" type="CanvasLayer" parent="." unique_id=1458659419]
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1240095964 groups=["layer_main"]]
 
-[node name="Control" type="Control" parent="Crafting Table UI" unique_id=1562771931]
+[node name="TileMapLayer2" type="TileMapLayer" parent="." unique_id=810248777 groups=["layer_object"]]
+
+[node name="TileMapLayer3" type="TileMapLayer" parent="." unique_id=474354408 groups=["layer_back_wall"]]
+
+[node name="TileMapLayer4" type="TileMapLayer" parent="." unique_id=486006339 groups=["layer_background"]]
+
+[node name="LoadingScreen" type="CanvasLayer" parent="." unique_id=1335275871 groups=["loading_screen"]]
+layer = 10
+
+[node name="Control" type="Control" parent="LoadingScreen" unique_id=1631045052]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("15_cvmbd")
-
-[node name="TextureRect" type="TextureRect" parent="Crafting Table UI/Control" unique_id=569138913]
-layout_mode = 0
+anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-texture = ExtResource("16_ft6cd")
-stretch_mode = 2
 
-[node name="craftingtable_slot0" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1145496752]
+[node name="Label" type="Label" parent="LoadingScreen/Control" unique_id=1989380311 groups=["loading_label"]]
 layout_mode = 0
-offset_left = 8.0
-offset_top = 9.0
-offset_right = 25.0
-offset_bottom = 26.0
+offset_right = 40.0
+offset_bottom = 28.0
+text = "Generating world..."
 
-[node name="craftingtable_slot1" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=243263258]
-layout_mode = 0
-offset_left = 29.0
-offset_top = 9.0
-offset_right = 46.0
-offset_bottom = 26.0
+[node name="DeathScreen" type="CanvasLayer" parent="." unique_id=308664698 groups=["death_screen"]]
+layer = 10
+visible = false
 
-[node name="craftingtable_slot2" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1415976585]
-layout_mode = 0
-offset_left = 50.0
-offset_top = 9.0
-offset_right = 67.0
-offset_bottom = 26.0
-
-[node name="craftingtable_slot3" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=696081919]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 30.0
-offset_right = 25.0
-offset_bottom = 47.0
-
-[node name="craftingtable_slot4" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1141227296]
-layout_mode = 0
-offset_left = 29.0
-offset_top = 30.0
-offset_right = 46.0
-offset_bottom = 47.0
-
-[node name="craftingtable_slot5" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1623724649]
-layout_mode = 0
-offset_left = 50.0
-offset_top = 30.0
-offset_right = 67.0
-offset_bottom = 47.0
-
-[node name="craftingtable_slot6" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1710390754]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 51.0
-offset_right = 25.0
-offset_bottom = 68.0
-
-[node name="craftingtable_slot7" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1178224290]
-layout_mode = 0
-offset_left = 29.0
-offset_top = 51.0
-offset_right = 46.0
-offset_bottom = 68.0
-
-[node name="craftingtable_slot8" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=2092881502]
-layout_mode = 0
-offset_left = 50.0
-offset_top = 51.0
-offset_right = 67.0
-offset_bottom = 68.0
-
-[node name="craftingtable_slot_result" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1773203807]
-layout_mode = 0
-offset_left = 149.0
-offset_top = 29.0
-offset_right = 168.0
-offset_bottom = 48.0
-
-[node name="inventory_slot0" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1794084722]
-layout_mode = 0
-offset_left = 152.0
-offset_top = 120.0
-offset_right = 168.0
-offset_bottom = 136.0
-
-[node name="inventory_slot1" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1420610859]
-layout_mode = 0
-offset_left = 134.0
-offset_top = 120.0
-offset_right = 150.0
-offset_bottom = 136.0
-
-[node name="inventory_slot2" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1479812926]
-layout_mode = 0
-offset_left = 116.0
-offset_top = 120.0
-offset_right = 132.0
-offset_bottom = 136.0
-
-[node name="inventory_slot3" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=968774520]
-layout_mode = 0
-offset_left = 98.0
-offset_top = 120.0
-offset_right = 114.0
-offset_bottom = 136.0
-
-[node name="inventory_slot4" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1575514873]
-layout_mode = 0
-offset_left = 80.0
-offset_top = 120.0
-offset_right = 96.0
-offset_bottom = 136.0
-
-[node name="inventory_slot5" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1969464534]
-layout_mode = 0
-offset_left = 62.0
-offset_top = 120.0
-offset_right = 78.0
-offset_bottom = 136.0
-
-[node name="inventory_slot6" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=2047522797]
-layout_mode = 0
-offset_left = 44.0
-offset_top = 120.0
-offset_right = 60.0
-offset_bottom = 136.0
-
-[node name="inventory_slot7" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=96454364]
-layout_mode = 0
-offset_left = 26.0
-offset_top = 120.0
-offset_right = 42.0
-offset_bottom = 136.0
-
-[node name="inventory_slot8" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1829104830]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 120.0
-offset_right = 24.0
-offset_bottom = 136.0
-
-[node name="inventory_slot9" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1758269330]
-layout_mode = 0
-offset_left = 152.0
-offset_top = 102.0
-offset_right = 168.0
-offset_bottom = 118.0
-
-[node name="inventory_slot10" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1719374412]
-layout_mode = 0
-offset_left = 134.0
-offset_top = 102.0
-offset_right = 150.0
-offset_bottom = 118.0
-
-[node name="inventory_slot11" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1508610130]
-layout_mode = 0
-offset_left = 116.0
-offset_top = 102.0
-offset_right = 132.0
-offset_bottom = 118.0
-
-[node name="inventory_slot12" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=366446939]
-layout_mode = 0
-offset_left = 98.0
-offset_top = 102.0
-offset_right = 114.0
-offset_bottom = 118.0
-
-[node name="inventory_slot13" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=39594568]
-layout_mode = 0
-offset_left = 80.0
-offset_top = 102.0
-offset_right = 96.0
-offset_bottom = 118.0
-
-[node name="inventory_slot14" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=819382742]
-layout_mode = 0
-offset_left = 62.0
-offset_top = 102.0
-offset_right = 78.0
-offset_bottom = 118.0
-
-[node name="inventory_slot15" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=221149244]
-layout_mode = 0
-offset_left = 44.0
-offset_top = 102.0
-offset_right = 60.0
-offset_bottom = 118.0
-
-[node name="inventory_slot16" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=2129537914]
-layout_mode = 0
-offset_left = 26.0
-offset_top = 102.0
-offset_right = 42.0
-offset_bottom = 118.0
-
-[node name="inventory_slot17" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=359953170]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 102.0
-offset_right = 24.0
-offset_bottom = 118.0
-
-[node name="inventory_slot18" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1177777475]
-layout_mode = 0
-offset_left = 152.0
-offset_top = 84.0
-offset_right = 168.0
-offset_bottom = 100.0
-
-[node name="inventory_slot19" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=2083951362]
-layout_mode = 0
-offset_left = 134.0
-offset_top = 84.0
-offset_right = 150.0
-offset_bottom = 100.0
-
-[node name="inventory_slot20" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1347556422]
-layout_mode = 0
-offset_left = 116.0
-offset_top = 84.0
-offset_right = 132.0
-offset_bottom = 100.0
-
-[node name="inventory_slot21" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1077609]
-layout_mode = 0
-offset_left = 98.0
-offset_top = 84.0
-offset_right = 114.0
-offset_bottom = 100.0
-
-[node name="inventory_slot22" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1592840893]
-layout_mode = 0
-offset_left = 80.0
-offset_top = 84.0
-offset_right = 96.0
-offset_bottom = 100.0
-
-[node name="inventory_slot23" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1702319207]
-layout_mode = 0
-offset_left = 62.0
-offset_top = 84.0
-offset_right = 78.0
-offset_bottom = 100.0
-
-[node name="inventory_slot24" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=773055357]
-layout_mode = 0
-offset_left = 44.0
-offset_top = 84.0
-offset_right = 60.0
-offset_bottom = 100.0
-
-[node name="inventory_slot25" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1693002050]
-layout_mode = 0
-offset_left = 26.0
-offset_top = 84.0
-offset_right = 42.0
-offset_bottom = 100.0
-
-[node name="inventory_slot26" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=2108075815]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 84.0
-offset_right = 24.0
-offset_bottom = 100.0
-
-[node name="hotbar_slot1" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=869806844]
-layout_mode = 0
-offset_left = 8.0
-offset_top = 142.0
-offset_right = 24.0
-offset_bottom = 158.0
-
-[node name="hotbar_slot2" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=412238504]
-layout_mode = 0
-offset_left = 26.0
-offset_top = 142.0
-offset_right = 42.0
-offset_bottom = 158.0
-
-[node name="hotbar_slot3" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1434662812]
-layout_mode = 0
-offset_left = 44.0
-offset_top = 142.0
-offset_right = 60.0
-offset_bottom = 158.0
-
-[node name="hotbar_slot4" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=734653121]
-layout_mode = 0
-offset_left = 62.0
-offset_top = 142.0
-offset_right = 78.0
-offset_bottom = 158.0
-
-[node name="hotbar_slot5" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1557667418]
-layout_mode = 0
-offset_left = 80.0
-offset_top = 142.0
-offset_right = 96.0
-offset_bottom = 158.0
-
-[node name="hotbar_slot6" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1518177722]
-layout_mode = 0
-offset_left = 98.0
-offset_top = 142.0
-offset_right = 114.0
-offset_bottom = 158.0
-
-[node name="hotbar_slot7" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=1573667457]
-layout_mode = 0
-offset_left = 116.0
-offset_top = 142.0
-offset_right = 132.0
-offset_bottom = 158.0
-
-[node name="hotbar_slot8" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=768770638]
-layout_mode = 0
-offset_left = 134.0
-offset_top = 142.0
-offset_right = 150.0
-offset_bottom = 158.0
-
-[node name="hotbar_slot9" type="Panel" parent="Crafting Table UI/Control/TextureRect" unique_id=929270835]
-layout_mode = 0
-offset_left = 152.0
-offset_top = 142.0
-offset_right = 168.0
-offset_bottom = 158.0
-
-[node name="Inventory UI" parent="." unique_id=1763469935 instance=ExtResource("4_rarhs")]
-
-[node name="HotbarLayer" type="CanvasLayer" parent="." unique_id=1232873149]
-
-[node name="HotbarHUD" type="Control" parent="HotbarLayer" unique_id=630048469]
+[node name="Control" type="Control" parent="DeathScreen" unique_id=1468921084]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="DeathScreen/Control" unique_id=133396614 groups=["death_label"]]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 28.0
+text = "You died!"
+
+[node name="Inventory" type="CanvasLayer" parent="." unique_id=1331473719]
+
+[node name="Control" parent="Inventory" unique_id=1763469935 instance=ExtResource("4_rarhs")]
+
+[node name="Crafting Table" type="CanvasLayer" parent="." unique_id=975930943]
+
+[node name="Control" parent="Crafting Table" unique_id=1562771931 instance=ExtResource("6_qmy6f")]
+
+[node name="Furnace" type="CanvasLayer" parent="." unique_id=153843981]
+
+[node name="Control" parent="Furnace" unique_id=1166338188 instance=ExtResource("3_nfivy")]
+
+[node name="Anvil" type="CanvasLayer" parent="." unique_id=455840832]
+
+[node name="Control" parent="Anvil" unique_id=280099997 instance=ExtResource("4_1nqs0")]
+
+[node name="Hotbar" type="CanvasLayer" parent="." unique_id=868708807]
+
+[node name="HotbarHUD" type="Control" parent="Hotbar" unique_id=874930052]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 script = ExtResource("8_1iba3")
 hotbar_texture = ExtResource("9_yxlcp")
 
-[node name="StatsHUD" type="Control" parent="HotbarLayer" unique_id=1576144977]
+[node name="StatsHUD" type="Control" parent="Hotbar" unique_id=484491191]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 script = ExtResource("10_ebg2g")
 stats_texture = ExtResource("11_2ofn6")
 
-[node name="Player" type="CharacterBody2D" parent="." unique_id=632806575 groups=["player"]]
-script = ExtResource("4_3p2gp")
-head_turn_speed = 15.0
-
-[node name="Visual" type="Node2D" parent="Player" unique_id=944193372]
-script = ExtResource("5_cvmbd")
-
-[node name="Body" type="Node2D" parent="Player/Visual" unique_id=1281968598]
-z_index = 1
-
-[node name="Body" type="Sprite2D" parent="Player/Visual/Body" unique_id=147979631]
-texture = ExtResource("6_ft6cd")
-
-[node name="Front Arm" type="Node2D" parent="Player/Visual" unique_id=1289554092]
-z_index = 2
-position = Vector2(0, -12)
-
-[node name="Front Arm" type="Sprite2D" parent="Player/Visual/Front Arm" unique_id=854493982]
-z_index = 1
-texture = ExtResource("7_bb450")
-offset = Vector2(0, 12)
-
-[node name="Back Arm" type="Node2D" parent="Player/Visual" unique_id=1698007138]
-z_index = 1
-position = Vector2(0, -12)
-
-[node name="Back Arm" type="Sprite2D" parent="Player/Visual/Back Arm" unique_id=2086179683]
-modulate = Color(0.54397863, 0.54397863, 0.54397863, 1)
-z_index = -1
-texture = ExtResource("8_nfivy")
-offset = Vector2(0, 12)
-
-[node name="Front Leg" type="Node2D" parent="Player/Visual" unique_id=455248493]
-z_index = 1
-position = Vector2(0, 12)
-
-[node name="Front Leg" type="Sprite2D" parent="Player/Visual/Front Leg" unique_id=2020613968]
-texture = ExtResource("9_1nqs0")
-offset = Vector2(0, 12)
-
-[node name="Back Leg" type="Node2D" parent="Player/Visual" unique_id=1413135505]
-position = Vector2(0, 12)
-
-[node name="Back Leg" type="Sprite2D" parent="Player/Visual/Back Leg" unique_id=1517263636]
-modulate = Color(0.54509807, 0.54509807, 0.54509807, 1)
-texture = ExtResource("10_1iba3")
-offset = Vector2(0, 12)
-
-[node name="Head" type="Node2D" parent="Player/Visual" unique_id=859152064]
-position = Vector2(0, -12)
-
-[node name="Head" type="Sprite2D" parent="Player/Visual/Head" unique_id=1959582528]
-texture = ExtResource("11_yxlcp")
-offset = Vector2(0, -8)
-
-[node name="Camera2D" type="Camera2D" parent="Player" unique_id=81120522]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=1605799205]
-position = Vector2(0, 4.5)
-shape = SubResource("RectangleShape2D_d3wef")
-debug_color = Color(0.85882354, 0, 0, 0.64705884)
-
-[node name="BlockInteraction" type="Node" parent="Player" unique_id=1244212651 node_paths=PackedStringArray("crafting_table_ui")]
-script = ExtResource("12_ebg2g")
-drop_scene = ExtResource("13_2ofn6")
-break_effect_scene = ExtResource("14_xa025")
-break_indicator_texture = ExtResource("17_ft6cd")
-crafting_table_ui = NodePath("../../Crafting Table UI/Control")
-
-[node name="TileLayer_Background" type="TileMapLayer" parent="." unique_id=865861473 groups=["layer_background"]]
-modulate = Color(0.2150898, 0.2150898, 0.2150898, 1)
-z_index = -60
-collision_enabled = false
-
-[node name="TileLayer_Wall" type="TileMapLayer" parent="." unique_id=1139481248 groups=["layer_back_wall"]]
-modulate = Color(0.5019608, 0.5019608, 0.5019608, 1)
-z_index = -40
-collision_enabled = false
-
-[node name="TileLayer_Objects" type="TileMapLayer" parent="." unique_id=1293327576 groups=["layer_object"]]
-z_index = -20
-collision_enabled = false
-
-[node name="TileLayer_Foreground" type="TileMapLayer" parent="." unique_id=1584587954 groups=["layer_main"]]
-
-[node name="TileLayer_Far_Background" type="TileMapLayer" parent="." unique_id=356693748 groups=["layer_far_background","layer_far_background_front"]]
-modulate = Color(0.44, 0.44, 0.44, 1)
-z_index = -80
-z_as_relative = false
-position = Vector2(0, 112)
-
-[node name="TileLayer_Far_Background_Back" type="TileMapLayer" parent="." unique_id=1883031559 groups=["layer_far_background_back"]]
-modulate = Color(0.34, 0.34, 0.34, 1)
-z_index = -90
-z_as_relative = false
-position = Vector2(0, 112)
-collision_enabled = false
+[editable path="Player"]

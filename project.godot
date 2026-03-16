@@ -41,6 +41,10 @@ layer_back_wall=""
 layer_background=""
 layer_far_background=""
 world_gen=""
+loading_screen=""
+loading_label=""
+death_screen=""
+death_label=""
 
 [gui]
 

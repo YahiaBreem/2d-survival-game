@@ -3,330 +3,328 @@
 [ext_resource type="Script" uid="uid://bo62ijancgq27" path="res://scripts/inventory_ui.gd" id="1_hj2ta"]
 [ext_resource type="Texture2D" uid="uid://es3w7edne7bk" path="res://assets/Textures/gui/inventory.png" id="1_qw0r6"]
 
-[node name="CanvasLayer" type="CanvasLayer" unique_id=675768784]
-
-[node name="Control" type="Control" parent="." unique_id=1763469935]
+[node name="Control" type="Control" unique_id=1763469935]
 layout_mode = 3
 anchors_preset = 0
 scale = Vector2(1.0026621, 1.0078163)
 script = ExtResource("1_hj2ta")
 
-[node name="TextureRect" type="TextureRect" parent="Control" unique_id=1577357693]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1577357693]
 layout_mode = 0
 offset_right = 176.0
 offset_bottom = 166.0
 texture = ExtResource("1_qw0r6")
 stretch_mode = 2
 
-[node name="helmet_slot" type="Panel" parent="Control/TextureRect" unique_id=997030447]
+[node name="helmet_slot" type="Panel" parent="TextureRect" unique_id=997030447]
 layout_mode = 0
 offset_left = 7.9787602
 offset_top = 7.9379544
 offset_right = 23.97876
 offset_bottom = 23.937954
 
-[node name="chestplate_slot" type="Panel" parent="Control/TextureRect" unique_id=782645275]
+[node name="chestplate_slot" type="Panel" parent="TextureRect" unique_id=782645275]
 layout_mode = 0
 offset_left = 7.9787602
 offset_top = 25.798351
 offset_right = 23.97876
 offset_bottom = 41.79835
 
-[node name="leggings_slot" type="Panel" parent="Control/TextureRect" unique_id=2116694591]
+[node name="leggings_slot" type="Panel" parent="TextureRect" unique_id=2116694591]
 layout_mode = 0
 offset_left = 7.9787602
 offset_top = 43.65875
 offset_right = 23.97876
 offset_bottom = 59.65875
 
-[node name="boots_slot" type="Panel" parent="Control/TextureRect" unique_id=1864765198]
+[node name="boots_slot" type="Panel" parent="TextureRect" unique_id=1864765198]
 layout_mode = 0
 offset_left = 7.9787602
 offset_top = 61.519146
 offset_right = 23.97876
 offset_bottom = 77.51915
 
-[node name="crafting_slot1" type="Panel" parent="Control/TextureRect" unique_id=2013628664]
+[node name="crafting_slot1" type="Panel" parent="TextureRect" unique_id=2013628664]
 layout_mode = 0
 offset_left = 97.73981
 offset_top = 17.860394
 offset_right = 113.73981
 offset_bottom = 33.860394
 
-[node name="crafting_slot2" type="Panel" parent="Control/TextureRect" unique_id=393445491]
+[node name="crafting_slot2" type="Panel" parent="TextureRect" unique_id=393445491]
 layout_mode = 0
 offset_left = 97.73981
 offset_top = 35.72079
 offset_right = 113.73981
 offset_bottom = 51.72079
 
-[node name="crafting_slot3" type="Panel" parent="Control/TextureRect" unique_id=1729003003]
+[node name="crafting_slot3" type="Panel" parent="TextureRect" unique_id=1729003003]
 layout_mode = 0
 offset_left = 115.69202
 offset_top = 17.860394
 offset_right = 131.69202
 offset_bottom = 33.860394
 
-[node name="crafting_slot4" type="Panel" parent="Control/TextureRect" unique_id=1472141028]
+[node name="crafting_slot4" type="Panel" parent="TextureRect" unique_id=1472141028]
 layout_mode = 0
 offset_left = 115.69202
 offset_top = 35.72079
 offset_right = 131.69202
 offset_bottom = 51.72079
 
-[node name="crafting_slot_result" type="Panel" parent="Control/TextureRect" unique_id=231133232]
+[node name="crafting_slot_result" type="Panel" parent="TextureRect" unique_id=231133232]
 layout_mode = 0
 offset_left = 153.5911
 offset_top = 27.782833
 offset_right = 169.5911
 offset_bottom = 43.782833
 
-[node name="inventory_slot0" type="Panel" parent="Control/TextureRect" unique_id=1095303246]
+[node name="inventory_slot0" type="Panel" parent="TextureRect" unique_id=1095303246]
 layout_mode = 0
 offset_left = 151.5964
 offset_top = 120.06156
 offset_right = 167.5964
 offset_bottom = 136.06155
 
-[node name="inventory_slot1" type="Panel" parent="Control/TextureRect" unique_id=1337804642]
+[node name="inventory_slot1" type="Panel" parent="TextureRect" unique_id=1337804642]
 layout_mode = 0
 offset_left = 133.6442
 offset_top = 120.06156
 offset_right = 149.6442
 offset_bottom = 136.06155
 
-[node name="inventory_slot2" type="Panel" parent="Control/TextureRect" unique_id=276308093]
+[node name="inventory_slot2" type="Panel" parent="TextureRect" unique_id=276308093]
 layout_mode = 0
 offset_left = 115.69202
 offset_top = 120.06156
 offset_right = 131.69202
 offset_bottom = 136.06155
 
-[node name="inventory_slot3" type="Panel" parent="Control/TextureRect" unique_id=938195688]
+[node name="inventory_slot3" type="Panel" parent="TextureRect" unique_id=938195688]
 layout_mode = 0
 offset_left = 97.73981
 offset_top = 120.06156
 offset_right = 113.73981
 offset_bottom = 136.06155
 
-[node name="inventory_slot4" type="Panel" parent="Control/TextureRect" unique_id=1198181182]
+[node name="inventory_slot4" type="Panel" parent="TextureRect" unique_id=1198181182]
 layout_mode = 0
 offset_left = 79.7876
 offset_top = 120.06156
 offset_right = 95.7876
 offset_bottom = 136.06155
 
-[node name="inventory_slot5" type="Panel" parent="Control/TextureRect" unique_id=71751800]
+[node name="inventory_slot5" type="Panel" parent="TextureRect" unique_id=71751800]
 layout_mode = 0
 offset_left = 61.83539
 offset_top = 120.06156
 offset_right = 77.83539
 offset_bottom = 136.06155
 
-[node name="inventory_slot6" type="Panel" parent="Control/TextureRect" unique_id=1656169255]
+[node name="inventory_slot6" type="Panel" parent="TextureRect" unique_id=1656169255]
 layout_mode = 0
 offset_left = 43.88318
 offset_top = 120.06156
 offset_right = 59.88318
 offset_bottom = 136.06155
 
-[node name="inventory_slot7" type="Panel" parent="Control/TextureRect" unique_id=211163157]
+[node name="inventory_slot7" type="Panel" parent="TextureRect" unique_id=211163157]
 layout_mode = 0
 offset_left = 25.93097
 offset_top = 120.06156
 offset_right = 41.93097
 offset_bottom = 136.06155
 
-[node name="inventory_slot8" type="Panel" parent="Control/TextureRect" unique_id=246792548]
+[node name="inventory_slot8" type="Panel" parent="TextureRect" unique_id=246792548]
 layout_mode = 0
 offset_left = 7.9787602
 offset_top = 120.06156
 offset_right = 23.97876
 offset_bottom = 136.06155
 
-[node name="inventory_slot9" type="Panel" parent="Control/TextureRect" unique_id=303929912]
+[node name="inventory_slot9" type="Panel" parent="TextureRect" unique_id=303929912]
 layout_mode = 0
 offset_left = 151.5964
 offset_top = 102.20115
 offset_right = 167.5964
 offset_bottom = 118.20115
 
-[node name="inventory_slot10" type="Panel" parent="Control/TextureRect" unique_id=1729026099]
+[node name="inventory_slot10" type="Panel" parent="TextureRect" unique_id=1729026099]
 layout_mode = 0
 offset_left = 133.6442
 offset_top = 102.20115
 offset_right = 149.6442
 offset_bottom = 118.20115
 
-[node name="inventory_slot11" type="Panel" parent="Control/TextureRect" unique_id=119628894]
+[node name="inventory_slot11" type="Panel" parent="TextureRect" unique_id=119628894]
 layout_mode = 0
 offset_left = 115.69202
 offset_top = 102.20115
 offset_right = 131.69202
 offset_bottom = 118.20115
 
-[node name="inventory_slot12" type="Panel" parent="Control/TextureRect" unique_id=697723791]
+[node name="inventory_slot12" type="Panel" parent="TextureRect" unique_id=697723791]
 layout_mode = 0
 offset_left = 97.73981
 offset_top = 102.20115
 offset_right = 113.73981
 offset_bottom = 118.20115
 
-[node name="inventory_slot13" type="Panel" parent="Control/TextureRect" unique_id=1714451991]
+[node name="inventory_slot13" type="Panel" parent="TextureRect" unique_id=1714451991]
 layout_mode = 0
 offset_left = 79.7876
 offset_top = 102.20115
 offset_right = 95.7876
 offset_bottom = 118.20115
 
-[node name="inventory_slot14" type="Panel" parent="Control/TextureRect" unique_id=1001905598]
+[node name="inventory_slot14" type="Panel" parent="TextureRect" unique_id=1001905598]
 layout_mode = 0
 offset_left = 61.83539
 offset_top = 102.20115
 offset_right = 77.83539
 offset_bottom = 118.20115
 
-[node name="inventory_slot15" type="Panel" parent="Control/TextureRect" unique_id=682257489]
+[node name="inventory_slot15" type="Panel" parent="TextureRect" unique_id=682257489]
 layout_mode = 0
 offset_left = 43.88318
 offset_top = 102.20115
 offset_right = 59.88318
 offset_bottom = 118.20115
 
-[node name="inventory_slot16" type="Panel" parent="Control/TextureRect" unique_id=733589490]
+[node name="inventory_slot16" type="Panel" parent="TextureRect" unique_id=733589490]
 layout_mode = 0
 offset_left = 25.93097
 offset_top = 102.20115
 offset_right = 41.93097
 offset_bottom = 118.20115
 
-[node name="inventory_slot17" type="Panel" parent="Control/TextureRect" unique_id=1698099290]
+[node name="inventory_slot17" type="Panel" parent="TextureRect" unique_id=1698099290]
 layout_mode = 0
 offset_left = 7.9787602
 offset_top = 102.20115
 offset_right = 23.97876
 offset_bottom = 118.20115
 
-[node name="inventory_slot18" type="Panel" parent="Control/TextureRect" unique_id=1733042253]
+[node name="inventory_slot18" type="Panel" parent="TextureRect" unique_id=1733042253]
 layout_mode = 0
 offset_left = 151.5964
 offset_top = 84.34075
 offset_right = 167.5964
 offset_bottom = 100.34075
 
-[node name="inventory_slot19" type="Panel" parent="Control/TextureRect" unique_id=1056677431]
+[node name="inventory_slot19" type="Panel" parent="TextureRect" unique_id=1056677431]
 layout_mode = 0
 offset_left = 133.6442
 offset_top = 84.34075
 offset_right = 149.6442
 offset_bottom = 100.34075
 
-[node name="inventory_slot20" type="Panel" parent="Control/TextureRect" unique_id=1410540110]
+[node name="inventory_slot20" type="Panel" parent="TextureRect" unique_id=1410540110]
 layout_mode = 0
 offset_left = 115.69202
 offset_top = 84.34075
 offset_right = 131.69202
 offset_bottom = 100.34075
 
-[node name="inventory_slot21" type="Panel" parent="Control/TextureRect" unique_id=2110854126]
+[node name="inventory_slot21" type="Panel" parent="TextureRect" unique_id=2110854126]
 layout_mode = 0
 offset_left = 97.73981
 offset_top = 84.34075
 offset_right = 113.73981
 offset_bottom = 100.34075
 
-[node name="inventory_slot22" type="Panel" parent="Control/TextureRect" unique_id=1961649745]
+[node name="inventory_slot22" type="Panel" parent="TextureRect" unique_id=1961649745]
 layout_mode = 0
 offset_left = 79.7876
 offset_top = 84.34075
 offset_right = 95.7876
 offset_bottom = 100.34075
 
-[node name="inventory_slot23" type="Panel" parent="Control/TextureRect" unique_id=1344082901]
+[node name="inventory_slot23" type="Panel" parent="TextureRect" unique_id=1344082901]
 layout_mode = 0
 offset_left = 61.83539
 offset_top = 84.34075
 offset_right = 77.83539
 offset_bottom = 100.34075
 
-[node name="inventory_slot24" type="Panel" parent="Control/TextureRect" unique_id=615913524]
+[node name="inventory_slot24" type="Panel" parent="TextureRect" unique_id=615913524]
 layout_mode = 0
 offset_left = 43.88318
 offset_top = 84.34075
 offset_right = 59.88318
 offset_bottom = 100.34075
 
-[node name="inventory_slot25" type="Panel" parent="Control/TextureRect" unique_id=1360673903]
+[node name="inventory_slot25" type="Panel" parent="TextureRect" unique_id=1360673903]
 layout_mode = 0
 offset_left = 25.93097
 offset_top = 84.34075
 offset_right = 41.93097
 offset_bottom = 100.34075
 
-[node name="inventory_slot26" type="Panel" parent="Control/TextureRect" unique_id=1576434618]
+[node name="inventory_slot26" type="Panel" parent="TextureRect" unique_id=1576434618]
 layout_mode = 0
 offset_left = 7.9787602
 offset_top = 84.34075
 offset_right = 23.97876
 offset_bottom = 100.34075
 
-[node name="hotbar_slot1" type="Panel" parent="Control/TextureRect" unique_id=1819131934]
+[node name="hotbar_slot1" type="Panel" parent="TextureRect" unique_id=1819131934]
 layout_mode = 0
 offset_left = 7.9787602
 offset_top = 141.89093
 offset_right = 23.97876
 offset_bottom = 157.89093
 
-[node name="hotbar_slot2" type="Panel" parent="Control/TextureRect" unique_id=1649512919]
+[node name="hotbar_slot2" type="Panel" parent="TextureRect" unique_id=1649512919]
 layout_mode = 0
 offset_left = 25.93097
 offset_top = 141.89093
 offset_right = 41.93097
 offset_bottom = 157.89093
 
-[node name="hotbar_slot3" type="Panel" parent="Control/TextureRect" unique_id=1964530110]
+[node name="hotbar_slot3" type="Panel" parent="TextureRect" unique_id=1964530110]
 layout_mode = 0
 offset_left = 43.88318
 offset_top = 141.89093
 offset_right = 59.88318
 offset_bottom = 157.89093
 
-[node name="hotbar_slot4" type="Panel" parent="Control/TextureRect" unique_id=1504724016]
+[node name="hotbar_slot4" type="Panel" parent="TextureRect" unique_id=1504724016]
 layout_mode = 0
 offset_left = 61.83539
 offset_top = 141.89093
 offset_right = 77.83539
 offset_bottom = 157.89093
 
-[node name="hotbar_slot5" type="Panel" parent="Control/TextureRect" unique_id=449748520]
+[node name="hotbar_slot5" type="Panel" parent="TextureRect" unique_id=449748520]
 layout_mode = 0
 offset_left = 79.7876
 offset_top = 141.89093
 offset_right = 95.7876
 offset_bottom = 157.89093
 
-[node name="hotbar_slot6" type="Panel" parent="Control/TextureRect" unique_id=208211122]
+[node name="hotbar_slot6" type="Panel" parent="TextureRect" unique_id=208211122]
 layout_mode = 0
 offset_left = 97.73981
 offset_top = 141.89093
 offset_right = 113.73981
 offset_bottom = 157.89093
 
-[node name="hotbar_slot7" type="Panel" parent="Control/TextureRect" unique_id=224403824]
+[node name="hotbar_slot7" type="Panel" parent="TextureRect" unique_id=224403824]
 layout_mode = 0
 offset_left = 115.69202
 offset_top = 141.89093
 offset_right = 131.69202
 offset_bottom = 157.89093
 
-[node name="hotbar_slot8" type="Panel" parent="Control/TextureRect" unique_id=1349004650]
+[node name="hotbar_slot8" type="Panel" parent="TextureRect" unique_id=1349004650]
 layout_mode = 0
 offset_left = 133.6442
 offset_top = 141.89093
 offset_right = 149.6442
 offset_bottom = 157.89093
 
-[node name="hotbar_slot9" type="Panel" parent="Control/TextureRect" unique_id=1157812985]
+[node name="hotbar_slot9" type="Panel" parent="TextureRect" unique_id=1157812985]
 layout_mode = 0
 offset_left = 151.5964
 offset_top = 141.89093

@@ -3,9 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://2ilvk2jxfuo" path="res://assets/Textures/gui/furnace.png" id="1_0y7ne"]
 [ext_resource type="Script" uid="uid://cq3crg53klqt3" path="res://scripts/furnace_ui.gd" id="1_61l8k"]
 
-[node name="Furnace UI" type="CanvasLayer" unique_id=1913848886]
-
-[node name="Control" type="Control" parent="." unique_id=1166338188]
+[node name="Control" type="Control" unique_id=1166338188]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,280 +12,280 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_61l8k")
 
-[node name="TextureRect" type="TextureRect" parent="Control" unique_id=382707200]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=382707200]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 texture = ExtResource("1_0y7ne")
 stretch_mode = 2
 
-[node name="furnace_slot0" type="Panel" parent="Control/TextureRect" unique_id=924464730]
+[node name="furnace_slot0" type="Panel" parent="TextureRect" unique_id=924464730]
 layout_mode = 0
 offset_left = 22.0
 offset_top = 18.0
 offset_right = 36.0
 offset_bottom = 32.0
 
-[node name="furnace_slot1" type="Panel" parent="Control/TextureRect" unique_id=236129705]
+[node name="furnace_slot1" type="Panel" parent="TextureRect" unique_id=236129705]
 layout_mode = 0
 offset_left = 22.0
 offset_top = 54.0
 offset_right = 36.0
 offset_bottom = 68.0
 
-[node name="furnace_slot_result" type="Panel" parent="Control/TextureRect" unique_id=2120473503]
+[node name="furnace_slot_result" type="Panel" parent="TextureRect" unique_id=2120473503]
 layout_mode = 0
 offset_left = 140.0
 offset_top = 34.0
 offset_right = 160.0
 offset_bottom = 54.0
 
-[node name="inventory_slot0" type="Panel" parent="Control/TextureRect" unique_id=2020237568]
+[node name="inventory_slot0" type="Panel" parent="TextureRect" unique_id=2020237568]
 layout_mode = 0
 offset_left = 152.0
 offset_top = 120.0
 offset_right = 168.0
 offset_bottom = 136.0
 
-[node name="inventory_slot1" type="Panel" parent="Control/TextureRect" unique_id=1066451565]
+[node name="inventory_slot1" type="Panel" parent="TextureRect" unique_id=1066451565]
 layout_mode = 0
 offset_left = 134.0
 offset_top = 120.0
 offset_right = 150.0
 offset_bottom = 136.0
 
-[node name="inventory_slot2" type="Panel" parent="Control/TextureRect" unique_id=92028002]
+[node name="inventory_slot2" type="Panel" parent="TextureRect" unique_id=92028002]
 layout_mode = 0
 offset_left = 116.0
 offset_top = 120.0
 offset_right = 132.0
 offset_bottom = 136.0
 
-[node name="inventory_slot3" type="Panel" parent="Control/TextureRect" unique_id=1335884457]
+[node name="inventory_slot3" type="Panel" parent="TextureRect" unique_id=1335884457]
 layout_mode = 0
 offset_left = 98.0
 offset_top = 120.0
 offset_right = 114.0
 offset_bottom = 136.0
 
-[node name="inventory_slot4" type="Panel" parent="Control/TextureRect" unique_id=1903314662]
+[node name="inventory_slot4" type="Panel" parent="TextureRect" unique_id=1903314662]
 layout_mode = 0
 offset_left = 80.0
 offset_top = 120.0
 offset_right = 96.0
 offset_bottom = 136.0
 
-[node name="inventory_slot5" type="Panel" parent="Control/TextureRect" unique_id=389455089]
+[node name="inventory_slot5" type="Panel" parent="TextureRect" unique_id=389455089]
 layout_mode = 0
 offset_left = 62.0
 offset_top = 120.0
 offset_right = 78.0
 offset_bottom = 136.0
 
-[node name="inventory_slot6" type="Panel" parent="Control/TextureRect" unique_id=1609456887]
+[node name="inventory_slot6" type="Panel" parent="TextureRect" unique_id=1609456887]
 layout_mode = 0
 offset_left = 44.0
 offset_top = 120.0
 offset_right = 60.0
 offset_bottom = 136.0
 
-[node name="inventory_slot7" type="Panel" parent="Control/TextureRect" unique_id=982896229]
+[node name="inventory_slot7" type="Panel" parent="TextureRect" unique_id=982896229]
 layout_mode = 0
 offset_left = 26.0
 offset_top = 120.0
 offset_right = 42.0
 offset_bottom = 136.0
 
-[node name="inventory_slot8" type="Panel" parent="Control/TextureRect" unique_id=774843159]
+[node name="inventory_slot8" type="Panel" parent="TextureRect" unique_id=774843159]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 120.0
 offset_right = 24.0
 offset_bottom = 136.0
 
-[node name="inventory_slot9" type="Panel" parent="Control/TextureRect" unique_id=697583280]
+[node name="inventory_slot9" type="Panel" parent="TextureRect" unique_id=697583280]
 layout_mode = 0
 offset_left = 152.0
 offset_top = 102.0
 offset_right = 168.0
 offset_bottom = 118.0
 
-[node name="inventory_slot10" type="Panel" parent="Control/TextureRect" unique_id=1587224656]
+[node name="inventory_slot10" type="Panel" parent="TextureRect" unique_id=1587224656]
 layout_mode = 0
 offset_left = 134.0
 offset_top = 102.0
 offset_right = 150.0
 offset_bottom = 118.0
 
-[node name="inventory_slot11" type="Panel" parent="Control/TextureRect" unique_id=1963038095]
+[node name="inventory_slot11" type="Panel" parent="TextureRect" unique_id=1963038095]
 layout_mode = 0
 offset_left = 116.0
 offset_top = 102.0
 offset_right = 132.0
 offset_bottom = 118.0
 
-[node name="inventory_slot12" type="Panel" parent="Control/TextureRect" unique_id=1173459898]
+[node name="inventory_slot12" type="Panel" parent="TextureRect" unique_id=1173459898]
 layout_mode = 0
 offset_left = 98.0
 offset_top = 102.0
 offset_right = 114.0
 offset_bottom = 118.0
 
-[node name="inventory_slot13" type="Panel" parent="Control/TextureRect" unique_id=1737676413]
+[node name="inventory_slot13" type="Panel" parent="TextureRect" unique_id=1737676413]
 layout_mode = 0
 offset_left = 80.0
 offset_top = 102.0
 offset_right = 96.0
 offset_bottom = 118.0
 
-[node name="inventory_slot14" type="Panel" parent="Control/TextureRect" unique_id=489951844]
+[node name="inventory_slot14" type="Panel" parent="TextureRect" unique_id=489951844]
 layout_mode = 0
 offset_left = 62.0
 offset_top = 102.0
 offset_right = 78.0
 offset_bottom = 118.0
 
-[node name="inventory_slot15" type="Panel" parent="Control/TextureRect" unique_id=1774897455]
+[node name="inventory_slot15" type="Panel" parent="TextureRect" unique_id=1774897455]
 layout_mode = 0
 offset_left = 44.0
 offset_top = 102.0
 offset_right = 60.0
 offset_bottom = 118.0
 
-[node name="inventory_slot16" type="Panel" parent="Control/TextureRect" unique_id=1275649888]
+[node name="inventory_slot16" type="Panel" parent="TextureRect" unique_id=1275649888]
 layout_mode = 0
 offset_left = 26.0
 offset_top = 102.0
 offset_right = 42.0
 offset_bottom = 118.0
 
-[node name="inventory_slot17" type="Panel" parent="Control/TextureRect" unique_id=1330873473]
+[node name="inventory_slot17" type="Panel" parent="TextureRect" unique_id=1330873473]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 102.0
 offset_right = 24.0
 offset_bottom = 118.0
 
-[node name="inventory_slot18" type="Panel" parent="Control/TextureRect" unique_id=1210408318]
+[node name="inventory_slot18" type="Panel" parent="TextureRect" unique_id=1210408318]
 layout_mode = 0
 offset_left = 152.0
 offset_top = 84.0
 offset_right = 168.0
 offset_bottom = 100.0
 
-[node name="inventory_slot19" type="Panel" parent="Control/TextureRect" unique_id=1188506958]
+[node name="inventory_slot19" type="Panel" parent="TextureRect" unique_id=1188506958]
 layout_mode = 0
 offset_left = 134.0
 offset_top = 84.0
 offset_right = 150.0
 offset_bottom = 100.0
 
-[node name="inventory_slot20" type="Panel" parent="Control/TextureRect" unique_id=1911151527]
+[node name="inventory_slot20" type="Panel" parent="TextureRect" unique_id=1911151527]
 layout_mode = 0
 offset_left = 116.0
 offset_top = 84.0
 offset_right = 132.0
 offset_bottom = 100.0
 
-[node name="inventory_slot21" type="Panel" parent="Control/TextureRect" unique_id=1725657961]
+[node name="inventory_slot21" type="Panel" parent="TextureRect" unique_id=1725657961]
 layout_mode = 0
 offset_left = 98.0
 offset_top = 84.0
 offset_right = 114.0
 offset_bottom = 100.0
 
-[node name="inventory_slot22" type="Panel" parent="Control/TextureRect" unique_id=1884586861]
+[node name="inventory_slot22" type="Panel" parent="TextureRect" unique_id=1884586861]
 layout_mode = 0
 offset_left = 80.0
 offset_top = 84.0
 offset_right = 96.0
 offset_bottom = 100.0
 
-[node name="inventory_slot23" type="Panel" parent="Control/TextureRect" unique_id=1352693892]
+[node name="inventory_slot23" type="Panel" parent="TextureRect" unique_id=1352693892]
 layout_mode = 0
 offset_left = 62.0
 offset_top = 84.0
 offset_right = 78.0
 offset_bottom = 100.0
 
-[node name="inventory_slot24" type="Panel" parent="Control/TextureRect" unique_id=1849027635]
+[node name="inventory_slot24" type="Panel" parent="TextureRect" unique_id=1849027635]
 layout_mode = 0
 offset_left = 44.0
 offset_top = 84.0
 offset_right = 60.0
 offset_bottom = 100.0
 
-[node name="inventory_slot25" type="Panel" parent="Control/TextureRect" unique_id=1439175668]
+[node name="inventory_slot25" type="Panel" parent="TextureRect" unique_id=1439175668]
 layout_mode = 0
 offset_left = 26.0
 offset_top = 84.0
 offset_right = 42.0
 offset_bottom = 100.0
 
-[node name="inventory_slot26" type="Panel" parent="Control/TextureRect" unique_id=18404945]
+[node name="inventory_slot26" type="Panel" parent="TextureRect" unique_id=18404945]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 84.0
 offset_right = 24.0
 offset_bottom = 100.0
 
-[node name="hotbar_slot1" type="Panel" parent="Control/TextureRect" unique_id=835488440]
+[node name="hotbar_slot1" type="Panel" parent="TextureRect" unique_id=835488440]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 142.0
 offset_right = 24.0
 offset_bottom = 158.0
 
-[node name="hotbar_slot2" type="Panel" parent="Control/TextureRect" unique_id=864775994]
+[node name="hotbar_slot2" type="Panel" parent="TextureRect" unique_id=864775994]
 layout_mode = 0
 offset_left = 26.0
 offset_top = 142.0
 offset_right = 42.0
 offset_bottom = 158.0
 
-[node name="hotbar_slot3" type="Panel" parent="Control/TextureRect" unique_id=1612987264]
+[node name="hotbar_slot3" type="Panel" parent="TextureRect" unique_id=1612987264]
 layout_mode = 0
 offset_left = 44.0
 offset_top = 142.0
 offset_right = 60.0
 offset_bottom = 158.0
 
-[node name="hotbar_slot4" type="Panel" parent="Control/TextureRect" unique_id=302109228]
+[node name="hotbar_slot4" type="Panel" parent="TextureRect" unique_id=302109228]
 layout_mode = 0
 offset_left = 62.0
 offset_top = 142.0
 offset_right = 78.0
 offset_bottom = 158.0
 
-[node name="hotbar_slot5" type="Panel" parent="Control/TextureRect" unique_id=1006421793]
+[node name="hotbar_slot5" type="Panel" parent="TextureRect" unique_id=1006421793]
 layout_mode = 0
 offset_left = 80.0
 offset_top = 142.0
 offset_right = 96.0
 offset_bottom = 158.0
 
-[node name="hotbar_slot6" type="Panel" parent="Control/TextureRect" unique_id=408132988]
+[node name="hotbar_slot6" type="Panel" parent="TextureRect" unique_id=408132988]
 layout_mode = 0
 offset_left = 98.0
 offset_top = 142.0
 offset_right = 114.0
 offset_bottom = 158.0
 
-[node name="hotbar_slot7" type="Panel" parent="Control/TextureRect" unique_id=980256420]
+[node name="hotbar_slot7" type="Panel" parent="TextureRect" unique_id=980256420]
 layout_mode = 0
 offset_left = 116.0
 offset_top = 142.0
 offset_right = 132.0
 offset_bottom = 158.0
 
-[node name="hotbar_slot8" type="Panel" parent="Control/TextureRect" unique_id=806272780]
+[node name="hotbar_slot8" type="Panel" parent="TextureRect" unique_id=806272780]
 layout_mode = 0
 offset_left = 134.0
 offset_top = 142.0
 offset_right = 150.0
 offset_bottom = 158.0
 
-[node name="hotbar_slot9" type="Panel" parent="Control/TextureRect" unique_id=140111409]
+[node name="hotbar_slot9" type="Panel" parent="TextureRect" unique_id=140111409]
 layout_mode = 0
 offset_left = 152.0
 offset_top = 142.0
