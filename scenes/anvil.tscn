@@ -1,0 +1,295 @@
+[gd_scene format=3 uid="uid://d2uu27jqlokh2"]
+
+[ext_resource type="Script" uid="uid://cjt4be5m7ybke" path="res://scripts/anvil_ui.gd" id="1_dnwij"]
+[ext_resource type="Texture2D" uid="uid://djcs2c5o42fit" path="res://assets/Textures/gui/anvil.png" id="1_wf6o5"]
+
+[node name="Anvil UI" type="CanvasLayer" unique_id=650324163]
+
+[node name="Control" type="Control" parent="." unique_id=280099997]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dnwij")
+
+[node name="TextureRect" type="TextureRect" parent="Control" unique_id=1392358290]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_wf6o5")
+stretch_mode = 2
+
+[node name="anvil_slot0" type="Panel" parent="Control/TextureRect" unique_id=277010896]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 31.0
+offset_right = 40.0
+offset_bottom = 59.0
+
+[node name="anvil_slot1" type="Panel" parent="Control/TextureRect" unique_id=168321164]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 31.0
+offset_right = 77.0
+offset_bottom = 59.0
+
+[node name="anvil_slot_result" type="Panel" parent="Control/TextureRect" unique_id=1723073390]
+layout_mode = 0
+offset_left = 141.0
+offset_top = 31.0
+offset_right = 169.0
+offset_bottom = 59.0
+
+[node name="inventory_slot0" type="Panel" parent="Control/TextureRect" unique_id=1731823516]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 120.0
+offset_right = 168.0
+offset_bottom = 136.0
+
+[node name="inventory_slot1" type="Panel" parent="Control/TextureRect" unique_id=573362417]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 120.0
+offset_right = 150.0
+offset_bottom = 136.0
+
+[node name="inventory_slot2" type="Panel" parent="Control/TextureRect" unique_id=2096542377]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 120.0
+offset_right = 132.0
+offset_bottom = 136.0
+
+[node name="inventory_slot3" type="Panel" parent="Control/TextureRect" unique_id=513903156]
+layout_mode = 0
+offset_left = 98.0
+offset_top = 120.0
+offset_right = 114.0
+offset_bottom = 136.0
+
+[node name="inventory_slot4" type="Panel" parent="Control/TextureRect" unique_id=1173286413]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 120.0
+offset_right = 96.0
+offset_bottom = 136.0
+
+[node name="inventory_slot5" type="Panel" parent="Control/TextureRect" unique_id=1348995737]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 120.0
+offset_right = 78.0
+offset_bottom = 136.0
+
+[node name="inventory_slot6" type="Panel" parent="Control/TextureRect" unique_id=561047611]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 120.0
+offset_right = 60.0
+offset_bottom = 136.0
+
+[node name="inventory_slot7" type="Panel" parent="Control/TextureRect" unique_id=109736828]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 120.0
+offset_right = 42.0
+offset_bottom = 136.0
+
+[node name="inventory_slot8" type="Panel" parent="Control/TextureRect" unique_id=185985605]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 120.0
+offset_right = 24.0
+offset_bottom = 136.0
+
+[node name="inventory_slot9" type="Panel" parent="Control/TextureRect" unique_id=2142672744]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 102.0
+offset_right = 168.0
+offset_bottom = 118.0
+
+[node name="inventory_slot10" type="Panel" parent="Control/TextureRect" unique_id=1033908598]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 102.0
+offset_right = 150.0
+offset_bottom = 118.0
+
+[node name="inventory_slot11" type="Panel" parent="Control/TextureRect" unique_id=1144244158]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 102.0
+offset_right = 132.0
+offset_bottom = 118.0
+
+[node name="inventory_slot12" type="Panel" parent="Control/TextureRect" unique_id=275667426]
+layout_mode = 0
+offset_left = 98.0
+offset_top = 102.0
+offset_right = 114.0
+offset_bottom = 118.0
+
+[node name="inventory_slot13" type="Panel" parent="Control/TextureRect" unique_id=1124320107]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 102.0
+offset_right = 96.0
+offset_bottom = 118.0
+
+[node name="inventory_slot14" type="Panel" parent="Control/TextureRect" unique_id=1154946686]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 102.0
+offset_right = 78.0
+offset_bottom = 118.0
+
+[node name="inventory_slot15" type="Panel" parent="Control/TextureRect" unique_id=296359094]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 102.0
+offset_right = 60.0
+offset_bottom = 118.0
+
+[node name="inventory_slot16" type="Panel" parent="Control/TextureRect" unique_id=285258137]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 102.0
+offset_right = 42.0
+offset_bottom = 118.0
+
+[node name="inventory_slot17" type="Panel" parent="Control/TextureRect" unique_id=138659629]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 102.0
+offset_right = 24.0
+offset_bottom = 118.0
+
+[node name="inventory_slot18" type="Panel" parent="Control/TextureRect" unique_id=1351783315]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 84.0
+offset_right = 168.0
+offset_bottom = 100.0
+
+[node name="inventory_slot19" type="Panel" parent="Control/TextureRect" unique_id=20779851]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 84.0
+offset_right = 150.0
+offset_bottom = 100.0
+
+[node name="inventory_slot20" type="Panel" parent="Control/TextureRect" unique_id=336711017]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 84.0
+offset_right = 132.0
+offset_bottom = 100.0
+
+[node name="inventory_slot21" type="Panel" parent="Control/TextureRect" unique_id=631383118]
+layout_mode = 0
+offset_left = 98.0
+offset_top = 84.0
+offset_right = 114.0
+offset_bottom = 100.0
+
+[node name="inventory_slot22" type="Panel" parent="Control/TextureRect" unique_id=1958633256]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 84.0
+offset_right = 96.0
+offset_bottom = 100.0
+
+[node name="inventory_slot23" type="Panel" parent="Control/TextureRect" unique_id=159630029]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 84.0
+offset_right = 78.0
+offset_bottom = 100.0
+
+[node name="inventory_slot24" type="Panel" parent="Control/TextureRect" unique_id=1820673247]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 84.0
+offset_right = 60.0
+offset_bottom = 100.0
+
+[node name="inventory_slot25" type="Panel" parent="Control/TextureRect" unique_id=1237106083]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 84.0
+offset_right = 42.0
+offset_bottom = 100.0
+
+[node name="inventory_slot26" type="Panel" parent="Control/TextureRect" unique_id=575769172]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 84.0
+offset_right = 24.0
+offset_bottom = 100.0
+
+[node name="hotbar_slot1" type="Panel" parent="Control/TextureRect" unique_id=1590678166]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 142.0
+offset_right = 24.0
+offset_bottom = 158.0
+
+[node name="hotbar_slot2" type="Panel" parent="Control/TextureRect" unique_id=546454496]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 142.0
+offset_right = 42.0
+offset_bottom = 158.0
+
+[node name="hotbar_slot3" type="Panel" parent="Control/TextureRect" unique_id=164171465]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 142.0
+offset_right = 60.0
+offset_bottom = 158.0
+
+[node name="hotbar_slot4" type="Panel" parent="Control/TextureRect" unique_id=664058864]
+layout_mode = 0
+offset_left = 62.0
+offset_top = 142.0
+offset_right = 78.0
+offset_bottom = 158.0
+
+[node name="hotbar_slot5" type="Panel" parent="Control/TextureRect" unique_id=268610262]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 142.0
+offset_right = 96.0
+offset_bottom = 158.0
+
+[node name="hotbar_slot6" type="Panel" parent="Control/TextureRect" unique_id=2080646119]
+layout_mode = 0
+offset_left = 98.0
+offset_top = 142.0
+offset_right = 114.0
+offset_bottom = 158.0
+
+[node name="hotbar_slot7" type="Panel" parent="Control/TextureRect" unique_id=1401876714]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 142.0
+offset_right = 132.0
+offset_bottom = 158.0
+
+[node name="hotbar_slot8" type="Panel" parent="Control/TextureRect" unique_id=265620782]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 142.0
+offset_right = 150.0
+offset_bottom = 158.0
+
+[node name="hotbar_slot9" type="Panel" parent="Control/TextureRect" unique_id=790188111]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 142.0
+offset_right = 168.0
+offset_bottom = 158.0

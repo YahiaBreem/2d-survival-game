@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://01vca2xeeoco"]
+
+[ext_resource type="Script" uid="uid://bb6v3i2mng8a" path="res://scripts/block_drop.gd" id="1_quslk"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wuqkj"]
+radius = 8.0
+
+[node name="Area2D" type="RigidBody2D" unique_id=1484542775]
+script = ExtResource("1_quslk")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1325743160]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=568137698]
+shape = SubResource("CircleShape2D_wuqkj")

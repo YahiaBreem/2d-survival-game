@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://c2j32w08dpiwm"]
+
+[ext_resource type="Script" uid="uid://bykln1earwp7b" path="res://scripts/block_break_effect.gd" id="1_asdwe"]
+
+[node name="Node2D" type="Node2D" unique_id=159190095]
+script = ExtResource("1_asdwe")
+
+[node name="Chunks" type="CPUParticles2D" parent="." unique_id=774108342]
+
+[node name="Dust" type="CPUParticles2D" parent="." unique_id=748589296]
