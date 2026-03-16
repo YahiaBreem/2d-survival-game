@@ -13,10 +13,10 @@
 [ext_resource type="Texture2D" uid="uid://1q00ta86ele6" path="res://assets/Textures/gui/icons.png" id="11_2ofn6"]
 [ext_resource type="Texture2D" uid="uid://cmwnehsf8rvlv" path="res://assets/Textures/blocks/destroy_indicate.png" id="17_ft6cd"]
 
-[node name="Node2D" type="Node2D" unique_id=336726014]
+[node name="Node2D" type="Node2D" unique_id=336726014 groups=["main"]]
 script = ExtResource("1_elqb8")
 
-[node name="WorldGen" type="Node" parent="." unique_id=1089963073]
+[node name="WorldGen" type="Node" parent="." unique_id=1089963073 groups=["world_gen"]]
 script = ExtResource("2_vcsgt")
 
 [node name="Player" parent="." unique_id=632806575 instance=ExtResource("3_bjd11")]
@@ -36,7 +36,6 @@ z_index = -10
 [node name="Wall Layer" type="TileMapLayer" parent="." unique_id=474354408 groups=["layer_back_wall"]]
 modulate = Color(0.34534797, 0.34534797, 0.34534797, 1)
 z_index = -20
-position = Vector2(0, 1)
 
 [node name="Background Layer" type="TileMapLayer" parent="." unique_id=486006339 groups=["layer_background"]]
 modulate = Color(0.2817484, 0.2817484, 0.2817484, 1)
@@ -45,10 +44,14 @@ z_index = -40
 [node name="Far Background Layer" type="TileMapLayer" parent="." unique_id=568430350 groups=["layer_far_background_front"]]
 modulate = Color(0.2817484, 0.2817484, 0.2817484, 1)
 z_index = -50
+z_as_relative = false
+position = Vector2(0, -18.65)
 
 [node name="Far Background Layer2" type="TileMapLayer" parent="." unique_id=1359455514 groups=["layer_far_background_back"]]
 modulate = Color(0.2817484, 0.2817484, 0.2817484, 1)
 z_index = -60
+z_as_relative = false
+position = Vector2(0, -6.5299997)
 
 [node name="LoadingScreen" type="CanvasLayer" parent="." unique_id=1335275871 groups=["loading_screen"]]
 layer = 10
@@ -63,7 +66,6 @@ offset_bottom = 40.0
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 28.0
-text = "Generating world..."
 
 [node name="DeathScreen" type="CanvasLayer" parent="." unique_id=308664698 groups=["death_screen"]]
 layer = 10

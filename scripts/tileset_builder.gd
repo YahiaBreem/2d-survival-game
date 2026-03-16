@@ -5,13 +5,10 @@
 # four TileMapLayer nodes. Only the foreground layer gets collision polygons.
 #
 # LAYER GROUPS (add each TileMapLayer to its group in the Godot editor):
-#   "layer_main"       — z   0: main terrain blocks  (has collision)
-#   "layer_object"     — z -20: objects / workstations (no collision)
-#   "layer_back_wall"  — z -40: back wall tiles        (no collision)
-#   "layer_background" — z -60: background / décor     (no collision)
-#   "layer_far_background_front" — z -80: far background front mountains (no collision)
-#   "layer_far_background_back"  — z -90: far background back mountains  (no collision)
-#   "layer_far_background"       — legacy fallback for front layer
+#   "tilemap"         — Layer  0: foreground blocks  (has collision)
+#   "tilemap_objects" — Layer -1: objects / furniture (no collision)
+#   "tilemap_wall"    — Layer -2: interactive walls   (no collision)
+#   "tilemap_bg"      — Layer -3: background / décor  (no collision)
 #
 # AUTOLOAD ORDER:
 #   BlockRegistry  →  TileSetBuilder  →  (WorldGen is a scene node, not autoload)
@@ -34,23 +31,31 @@ func build() -> void:
 	# Find all four layers — foreground is required, others are optional but
 	# should all be present for the full layer system to work.
 	# -----------------------------------------------------------------------
-	var fg:   TileMapLayer = get_tree().get_first_node_in_group("layer_main")        as TileMapLayer
-	var obj:  TileMapLayer = get_tree().get_first_node_in_group("layer_object")      as TileMapLayer
-	var wall: TileMapLayer = get_tree().get_first_node_in_group("layer_back_wall")   as TileMapLayer
-	var bg:   TileMapLayer = get_tree().get_first_node_in_group("layer_background")  as TileMapLayer
-	var far_bg_front: TileMapLayer = get_tree().get_first_node_in_group("layer_far_background_front") as TileMapLayer
-	if far_bg_front == null:
-		far_bg_front = get_tree().get_first_node_in_group("layer_far_background") as TileMapLayer
-	var far_bg_back: TileMapLayer = get_tree().get_first_node_in_group("layer_far_background_back") as TileMapLayer
+	var fg: TileMapLayer  = get_tree().get_first_node_in_group("tilemap")         as TileMapLayer
+	var obj: TileMapLayer = get_tree().get_first_node_in_group("tilemap_objects")  as TileMapLayer
+	var wall: TileMapLayer= get_tree().get_first_node_in_group("tilemap_wall")     as TileMapLayer
+	var bg: TileMapLayer  = get_tree().get_first_node_in_group("tilemap_bg")       as TileMapLayer
+
+	# New layer group names (world_gen.gd uses these)
+	if fg   == null: fg   = get_tree().get_first_node_in_group("layer_main")      as TileMapLayer
+	if obj  == null: obj  = get_tree().get_first_node_in_group("layer_object")    as TileMapLayer
+	if wall == null: wall = get_tree().get_first_node_in_group("layer_back_wall") as TileMapLayer
+	if bg   == null: bg   = get_tree().get_first_node_in_group("layer_background")as TileMapLayer
+
+	# Far background layers — collected separately so all get assigned
+	var far_front: TileMapLayer = get_tree().get_first_node_in_group("layer_far_background_front") as TileMapLayer
+	if far_front == null:
+		far_front = get_tree().get_first_node_in_group("layer_far_background") as TileMapLayer
+	var far_back: TileMapLayer  = get_tree().get_first_node_in_group("layer_far_background_back")  as TileMapLayer
 
 	if fg == null:
-		push_error("TileSetBuilder: 'layer_main' group not found. Aborting.")
+		push_error("TileSetBuilder: no foreground layer found. Aborting.")
 		return
-	if obj  == null: push_warning("TileSetBuilder: 'layer_object' layer not found.")
-	if wall == null: push_warning("TileSetBuilder: 'layer_back_wall' layer not found.")
-	if bg   == null: push_warning("TileSetBuilder: 'layer_background' layer not found.")
-	if far_bg_front == null: push_warning("TileSetBuilder: far background front layer not found.")
-	if far_bg_back == null: push_warning("TileSetBuilder: far background back layer not found.")
+	if obj      == null: push_warning("TileSetBuilder: object layer not found.")
+	if wall     == null: push_warning("TileSetBuilder: back wall layer not found.")
+	if bg       == null: push_warning("TileSetBuilder: background layer not found.")
+	if far_front== null: push_warning("TileSetBuilder: far background front layer not found (optional).")
+	if far_back == null: push_warning("TileSetBuilder: far background back layer not found (optional).")
 
 	# -----------------------------------------------------------------------
 	# Collect and sort base block coords
@@ -186,11 +191,11 @@ func build() -> void:
 	ts_no_collision.tile_size    = Vector2i(TILE_SIZE, TILE_SIZE)
 	ts_no_collision.add_source(atlas_source_nc, SOURCE_ID)
 
-	if obj  != null: obj.tile_set  = ts_no_collision
-	if wall != null: wall.tile_set = ts_no_collision
-	if bg   != null: bg.tile_set   = ts_no_collision
-	if far_bg_front != null: far_bg_front.tile_set = ts_no_collision
-	if far_bg_back != null: far_bg_back.tile_set = ts_no_collision
+	if obj      != null: obj.tile_set       = ts_no_collision
+	if wall     != null: wall.tile_set      = ts_no_collision
+	if bg       != null: bg.tile_set        = ts_no_collision
+	if far_front!= null: far_front.tile_set = ts_no_collision
+	if far_back != null: far_back.tile_set  = ts_no_collision
 
 	tileset_ready = true
 	print("TileSetBuilder: atlas %dx%d px, %d tiles — assigned to all layers." \

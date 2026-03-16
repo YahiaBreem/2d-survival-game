@@ -614,9 +614,9 @@ func item_has_tag(item_name: String, tag: String) -> bool:
 # Returns every item name that carries a given tag.
 func get_all_with_tag(tag: String) -> Array[String]:
 	var result: Array[String] = []
-	for name in ITEMS.keys():
-		if tag in ITEMS[name].get("tags", []):
-			result.append(name)
+	for iname in ITEMS.keys():
+		if tag in ITEMS[iname].get("tags", []):
+			result.append(iname)
 	return result
 
 # ---------------------------------------------------------------------------
@@ -697,15 +697,15 @@ func get_texture(item_name: String) -> Texture2D:
 # ---------------------------------------------------------------------------
 func get_all_of_type(item_type: String) -> Array[String]:
 	var result: Array[String] = []
-	for name in ITEMS.keys():
-		if ITEMS[name]["type"] == item_type:
-			result.append(name)
+	for iname in ITEMS.keys():
+		if ITEMS[iname]["type"] == item_type:
+			result.append(iname)
 	return result
 
 func get_all_tools_of_type(tool_type: String) -> Array[String]:
 	var result: Array[String] = []
-	for name in ITEMS.keys():
-		var data: Dictionary = ITEMS[name]
+	for iname in ITEMS.keys():
+		var data: Dictionary = ITEMS[iname]
 		if data["type"] == "tool" and data.get("tool_type", "") == tool_type:
-			result.append(name)
+			result.append(iname)
 	return result

@@ -36,6 +36,15 @@ const CHUNK_WIDTH:   int = 16   # columns per chunk
 const LOAD_RADIUS:   int = 6    # chunks to keep loaded on each side of the player
 const UNLOAD_RADIUS: int = 8    # chunks beyond this are erased from the tilemap
 
+# Far background chunk constants — wider chunks, separate load radii
+const FAR_CHUNK_WIDTH:   int   = 64    # far bg chunk width in tiles
+const FAR_LOAD_RADIUS:   int   = 3     # far chunks loaded each side of player
+const FAR_UNLOAD_RADIUS: int   = 5     # far chunks unloaded beyond this
+const FAR_SCALE:         float = 0.55  # tile scale — makes mountains look distant
+# Encoding offset — added to y before encoding so negative y values never
+# break integer division/modulo. Must be larger than any negative y in the world.
+const ENCODE_Y_OFFSET:   int   = 200
+
 # ---------------------------------------------------------------------------
 # BIOME / LANDFORM IDs
 # ---------------------------------------------------------------------------
@@ -180,6 +189,10 @@ const TREE_TYPES: Array = [
 @export var tree_min_height: int   = 4
 @export var tree_max_height: int   = 7
 
+@export_group("Spawn")
+## Tile column the player spawns at. -1 = auto (center of world).
+@export var spawn_tile_x: int = -1
+
 # ---------------------------------------------------------------------------
 # TILEMAP LAYER REFERENCES
 # ---------------------------------------------------------------------------
@@ -238,7 +251,7 @@ var _tree_type_coords: Array = []
 # ---------------------------------------------------------------------------
 # CHUNK DATA
 # _chunk_data[cx] = { "main":{}, "back_wall":{}, "object":{}, "background":{} }
-# Keys are encoded ints: y * 100000 + local_x  (local_x in 0..CHUNK_WIDTH-1)
+# Keys are encoded ints: (y + ENCODE_Y_OFFSET) * 100000 + local_x  (local_x in 0..CHUNK_WIDTH-1)
 # ---------------------------------------------------------------------------
 var _chunk_data:     Array      = []
 var _loaded_chunks:  Dictionary = {}   # cx -> true
@@ -250,7 +263,20 @@ var _thread_done: bool   = false
 
 var _last_mtn_far:  Array[float] = []
 var _last_mtn_near: Array[float] = []
-var _last_player_chunk: int = -99999
+var _last_player_chunk:     int = -99999
+
+# Far background chunk data (separate from main _chunk_data)
+# _far_chunk_data[cx] = { "front":{}, "back":{} }
+# Total columns = world_width * far_mtn_width_multiplier
+# cx is in far-tile space (1 far tile = 1 normal tile at FAR_SCALE size)
+var _far_chunk_data:        Array      = []
+## Set after generation — main.gd reads this to place the player correctly.
+var spawn_world_position:    Vector2   = Vector2.ZERO
+## X offset main.gd should apply to both far background layers for centering.
+var far_bg_center_offset_x:  float     = 0.0
+var _far_loaded_chunks:     Dictionary = {}   # cx -> true
+var _last_player_far_chunk: int        = -99999
+var _far_total_width:       int        = 0    # set during generation
 
 # ---------------------------------------------------------------------------
 # READY
@@ -296,18 +322,24 @@ func _process(_delta: float) -> void:
 			_gen_thread.wait_to_finish()
 			_gen_complete = true
 			_apply_static_layers()
-			_emit_generation_complete()
 			print("WorldGen: complete. Chunk streaming active.")
+			# Emit signal — main.gd polls _gen_complete each frame and will catch it
+			_emit_generation_complete()
 		return
 
 	var player: Node2D = get_tree().get_first_node_in_group("player") as Node2D
 	if player == null:
 		return
 	var cx: int = _world_x_to_chunk(player.global_position.x)
-	if cx == _last_player_chunk:
-		return
-	_last_player_chunk = cx
-	_update_loaded_chunks(cx)
+	if cx != _last_player_chunk:
+		_last_player_chunk = cx
+		_update_loaded_chunks(cx)
+
+	# Far background chunk streaming (wider chunks, own radius)
+	var far_cx: int = _world_x_to_far_chunk(player.global_position.x)
+	if far_cx != _last_player_far_chunk:
+		_last_player_far_chunk = far_cx
+		_update_far_loaded_chunks(far_cx)
 
 # ---------------------------------------------------------------------------
 # BACKGROUND THREAD — pure data, never touches nodes
@@ -332,6 +364,7 @@ func _thread_generate() -> void:
 
 	_settle_physical_data()
 
+	_generate_far_chunk_data()
 	_last_mtn_far  = _generate_far_silhouette_heights(far_mtn_amplitude)
 	_last_mtn_near = _generate_far_silhouette_heights(near_mtn_amplitude * 0.9)
 	_thread_done   = true
@@ -381,7 +414,7 @@ func _write_layer_cells(layer: TileMapLayer, cells: Dictionary, x_start: int) ->
 		return
 	for encoded: int in cells.keys():
 		var local_x: int    = encoded % 100000
-		var y:       int    = encoded / 100000
+		var y:       int    = encoded / 100000 - ENCODE_Y_OFFSET
 		var atlas:   Vector2i = cells[encoded]
 		layer.set_cell(Vector2i(x_start + local_x, y), tilemap_source_id, atlas)
 
@@ -391,8 +424,28 @@ func _write_layer_cells(layer: TileMapLayer, cells: Dictionary, x_start: int) ->
 func _apply_static_layers() -> void:
 	if _far_background_front != null: _far_background_front.clear()
 	if _far_background_back  != null: _far_background_back.clear()
-	_fill_far_background()
+	# Apply scale so tiles appear smaller / more distant
+	if _far_background_front != null: _far_background_front.scale = Vector2(FAR_SCALE, FAR_SCALE)
+	if _far_background_back  != null: _far_background_back.scale  = Vector2(FAR_SCALE, FAR_SCALE)
+	# Calculate centering offset but do NOT apply it here — main.gd applies it
+	# once in _on_generation_complete after capturing the parallax base position.
+	var tile_px:   float = 32.0 * FAR_SCALE
+	far_bg_center_offset_x = -float((_far_total_width - world_width) / 2) * tile_px
 	_carve_spawn_platform()
+	# Trigger the initial far chunk load — player position may not have changed
+	# yet so _process won't catch it without this explicit call.
+	# Use spawn_world_position so chunks load around where the player actually starts.
+	var start_x: float = spawn_world_position.x if spawn_world_position != Vector2.ZERO else float(world_width / 2) * 32.0
+	# Main chunks
+	var spawn_cx: int = _world_x_to_chunk(start_x)
+	_last_player_chunk = spawn_cx
+	_update_loaded_chunks(spawn_cx)
+	# Far chunks
+	var far_cx: int = _world_x_to_far_chunk(start_x)
+	_last_player_far_chunk = far_cx
+	_update_far_loaded_chunks(far_cx)
+	if not _far_chunk_data.is_empty():
+		var sample: Dictionary = _far_chunk_data[0]
 
 # ---------------------------------------------------------------------------
 # COLUMN DATA BUILDER
@@ -408,7 +461,7 @@ func _generate_column_data(x: int, surface_y: int) -> void:
 
 	for y in range(surface_y, world_bottom):
 		var depth: int = y - surface_y
-		var key:   int = y * 100000 + lx
+		var key:   int = (y + ENCODE_Y_OFFSET) * 100000 + lx
 
 		if _is_bedrock_cell(x, y, world_bottom):
 			var bc: Vector2i = _c_bedrock if _c_bedrock != Vector2i(-1,-1) else _c_stone
@@ -441,8 +494,9 @@ func _generate_column_data(x: int, surface_y: int) -> void:
 # BACKGROUND DATA BUILDER
 # ---------------------------------------------------------------------------
 func _generate_background_data() -> void:
-	if _background == null:
-		return
+	# NOTE: do NOT check _background != null here — this runs on the worker
+	# thread where node refs are meaningless. The null check lives in
+	# _write_layer_cells() which only runs on the main thread.
 	var world_top:    int        = surface_mid_y - terrain_amplitude - 40
 	var world_bottom: int        = _world_bottom()
 	var bg_heights:   Array[int] = _compute_bg_surface_heights()
@@ -459,7 +513,7 @@ func _generate_background_data() -> void:
 			var depth: int     = y - bg_y
 			var atlas: Vector2i = _pick_bg_block(x, y, depth, desert)
 			if atlas != Vector2i(-1,-1):
-				bd[y * 100000 + lx] = atlas
+				bd[(y + ENCODE_Y_OFFSET) * 100000 + lx] = atlas
 
 func _compute_bg_surface_heights() -> Array[int]:
 	var h:   Array[int] = []
@@ -504,11 +558,11 @@ func _generate_lakes_data() -> void:
 			var wd: Dictionary = _chunk_data[ch]["back_wall"]
 
 			for y in range(lsurf, lsurf + ldepth + 1):
-				md.erase(y * 100000 + lx)
+				md.erase((y + ENCODE_Y_OFFSET) * 100000 + lx)
 				if y == lsurf:
-					wd.erase(y * 100000 + lx)
+					wd.erase((y + ENCODE_Y_OFFSET) * 100000 + lx)
 			for y in range(lake_top, lsurf + ldepth + 1):
-				var k: int = y * 100000 + lx
+				var k: int = (y + ENCODE_Y_OFFSET) * 100000 + lx
 				if not md.has(k):
 					md[k] = _c_water
 
@@ -523,7 +577,7 @@ func _generate_sea_level_data() -> void:
 		var lx: int        = x % CHUNK_WIDTH
 		var md: Dictionary = _chunk_data[ch]["main"]
 		for y in range(sea_level, surf):
-			var k: int = y * 100000 + lx
+			var k: int = (y + ENCODE_Y_OFFSET) * 100000 + lx
 			if not md.has(k):
 				md[k] = _c_water
 
@@ -538,7 +592,7 @@ func _generate_tree_data(x: int, surface_y: int) -> void:
 	var md: Dictionary = _chunk_data[ch]["main"]
 	var wd: Dictionary = _chunk_data[ch]["back_wall"]
 
-	var surf_atlas: Vector2i = md.get(surface_y * 100000 + lx, Vector2i(-1,-1))
+	var surf_atlas: Vector2i = md.get((surface_y + ENCODE_Y_OFFSET) * 100000 + lx, Vector2i(-1,-1))
 	var surf_name:  String   = BlockRegistry.get_name_from_coords(surf_atlas)
 	var biome_id:   int      = _get_biome_id(x)
 
@@ -549,7 +603,7 @@ func _generate_tree_data(x: int, surface_y: int) -> void:
 	if valid.is_empty():
 		return
 
-	if md.get((surface_y - 1) * 100000 + lx, Vector2i(-1,-1)) == _c_water:
+	if md.get((surface_y - 1 + ENCODE_Y_OFFSET) * 100000 + lx, Vector2i(-1,-1)) == _c_water:
 		return
 
 	var t: float = (_tree_noise.get_noise_2d(float(x), 500.0) + 1.0) * 0.5
@@ -565,7 +619,7 @@ func _generate_tree_data(x: int, surface_y: int) -> void:
 		var nch: int = nx / CHUNK_WIDTH
 		var nlx: int = nx % CHUNK_WIDTH
 		var nh:  int = _surface_heights[nx]
-		if _chunk_data[nch]["object"].has((nh - 1) * 100000 + nlx):
+		if _chunk_data[nch]["object"].has((nh - 1 + ENCODE_Y_OFFSET) * 100000 + nlx):
 			return
 
 	var chosen:      Dictionary = _pick_weighted_tree(valid)
@@ -581,7 +635,7 @@ func _generate_tree_data(x: int, surface_y: int) -> void:
 			var ty:  int = surface_y - 1 - i
 			var tch: int = x / CHUNK_WIDTH
 			var tlx: int = x % CHUNK_WIDTH
-			_chunk_data[tch]["object"][ty * 100000 + tlx] = c_log
+			_chunk_data[tch]["object"][(ty + ENCODE_Y_OFFSET) * 100000 + tlx] = c_log
 
 		for row: Dictionary in _get_crown_rows(chosen["log_name"], biome_id):
 			var cy: int = crown_top_y + row["dy"]
@@ -591,7 +645,7 @@ func _generate_tree_data(x: int, surface_y: int) -> void:
 					continue
 				var lch: int = lc / CHUNK_WIDTH
 				var llx: int = lc % CHUNK_WIDTH
-				var lk:  int = cy * 100000 + llx
+				var lk:  int = (cy + ENCODE_Y_OFFSET) * 100000 + llx
 				if not _chunk_data[lch]["main"].has(lk):
 					_chunk_data[lch]["main"][lk] = c_leaves
 				if not _chunk_data[lch]["back_wall"].has(lk):
@@ -599,7 +653,7 @@ func _generate_tree_data(x: int, surface_y: int) -> void:
 	else:
 		for i in height:
 			var ty: int = surface_y - 1 - i
-			var k:  int = ty * 100000 + lx
+			var k:  int = (ty + ENCODE_Y_OFFSET) * 100000 + lx
 			if not md.has(k):
 				md[k] = c_log
 
@@ -617,7 +671,7 @@ func _settle_physical_data() -> void:
 			if x >= world_width:
 				break
 			for y in range(world_top, world_bottom):
-				var k:     int      = y * 100000 + lx
+				var k:     int      = (y + ENCODE_Y_OFFSET) * 100000 + lx
 				var atlas: Vector2i = md.get(k, Vector2i(-1,-1))
 				if atlas == Vector2i(-1,-1):
 					continue
@@ -628,7 +682,7 @@ func _settle_physical_data() -> void:
 					drop_y += 1
 				if drop_y != y:
 					md.erase(k)
-					md[drop_y * 100000 + lx] = atlas
+					md[(drop_y + ENCODE_Y_OFFSET) * 100000 + lx] = atlas
 
 # ---------------------------------------------------------------------------
 # SURFACE HEIGHT COMPUTATION
@@ -776,43 +830,6 @@ func _is_bedrock_cell(x: int, y: int, world_bottom: int) -> bool:
 	var n:    float = (_detail_noise.get_noise_2d(float(x) * 0.37 + 77.0, float(y) * 0.91 - 53.0) + 1.0) * 0.5
 	return n < fill
 
-# ---------------------------------------------------------------------------
-# FAR BACKGROUND  (written directly to TileMapLayer — static, never chunked)
-# ---------------------------------------------------------------------------
-func _fill_far_background() -> void:
-	if _far_background_front == null and _far_background_back == null:
-		return
-	var world_top:    int        = surface_mid_y - terrain_amplitude - 80
-	var world_bottom: int        = surface_mid_y + int(float(terrain_amplitude) * 0.15)
-	var front:        Array[int] = _generate_far_surface_heights()
-	var back:         Array[int] = _generate_far_back_surface(front)
-
-	for x in world_width:
-		var by:    int = back[x]
-		var from_b:int = max(world_top, by)
-		var to_b:  int = min(world_bottom, by + max(4, far_bg_back_band_depth))
-		for y in range(from_b, to_b):
-			var d: int = y - by
-			if d < 0: continue
-			var atlas: Vector2i = _pick_stone_variant(x, y, d + 12)
-			if atlas == Vector2i(-1,-1): continue
-			if _far_background_back  != null: _far_background_back.set_cell(Vector2i(x,y), tilemap_source_id, atlas)
-			elif _far_background_front != null: _far_background_front.set_cell(Vector2i(x,y), tilemap_source_id, atlas)
-
-	for x in world_width:
-		var fy:    int  = front[x]
-		var biome: int  = _get_biome_id(x)
-		var desert:bool = biome == BIOME_DESERT
-		var from_f:int  = max(world_top, fy)
-		var to_f:  int  = min(world_bottom, fy + max(5, far_bg_front_band_depth))
-		if from_f >= to_f: continue
-		for y in range(from_f, to_f):
-			var d: int = y - fy
-			if d < 0: continue
-			var atlas: Vector2i = _pick_far_bg_block(x, y, d, desert)
-			if atlas == Vector2i(-1,-1): continue
-			if _far_background_front != null: _far_background_front.set_cell(Vector2i(x,y), tilemap_source_id, atlas)
-			elif _far_background_back != null: _far_background_back.set_cell(Vector2i(x,y), tilemap_source_id, atlas)
 
 func _generate_far_back_surface(front: Array[int]) -> Array[int]:
 	if front.is_empty(): return front
@@ -928,13 +945,176 @@ func _generate_far_silhouette_heights(amplitude: float) -> Array[float]:
 		heights[x] = base_y - pow(n, max(0.25, far_shape_power)) * amplitude * tile_size
 	return heights
 
+
+# ---------------------------------------------------------------------------
+# FAR BACKGROUND CHUNK DATA BUILDER  (runs on worker thread)
+# Generates far_total_width columns = world_width * far_mtn_width_multiplier.
+# Centered so the playable world sits in the middle of the extended range.
+# ---------------------------------------------------------------------------
+func _generate_far_chunk_data() -> void:
+	_far_total_width = world_width * max(1, far_mtn_width_multiplier)
+	var nc: int = int(ceil(float(_far_total_width) / float(FAR_CHUNK_WIDTH)))
+	_far_chunk_data.resize(nc)
+	for i in nc:
+		_far_chunk_data[i] = { "front": {}, "back": {} }
+
+	var world_top:    int        = surface_mid_y - terrain_amplitude - 80
+	var world_bottom: int        = surface_mid_y + int(float(terrain_amplitude) * 0.15)
+	# Generate surface heights across the full extended width
+	var front: Array[int] = _generate_far_surface_heights_wide(_far_total_width)
+	var back:  Array[int] = _generate_far_back_surface(front)
+
+	for x in _far_total_width:
+		var cx:  int = x / FAR_CHUNK_WIDTH
+		var lx:  int = x % FAR_CHUNK_WIDTH
+		var fd:  Dictionary = _far_chunk_data[cx]["front"]
+		var bd:  Dictionary = _far_chunk_data[cx]["back"]
+		# Back band
+		var by:     int = back[x]
+		var from_b: int = max(world_top, by)
+		var to_b:   int = min(world_bottom, by + max(4, far_bg_back_band_depth))
+		for y in range(from_b, to_b):
+			var d: int = y - by
+			if d < 0: continue
+			var atlas: Vector2i = _pick_stone_variant(x, y, d + 12)
+			if atlas != Vector2i(-1,-1):
+				bd[(y + ENCODE_Y_OFFSET) * 100000 + lx] = atlas
+		# Front band
+		var fy:     int  = front[x]
+		# Use world-center x for biome so far bg biome matches the playable world
+		var world_x:int  = x - (_far_total_width - world_width) / 2
+		var biome:  int  = _get_biome_id(clamp(world_x, 0, world_width - 1))
+		var desert: bool = biome == BIOME_DESERT
+		var from_f: int  = max(world_top, fy)
+		var to_f:   int  = min(world_bottom, fy + max(5, far_bg_front_band_depth))
+		for y in range(from_f, to_f):
+			var d: int = y - fy
+			if d < 0: continue
+			var atlas: Vector2i = _pick_far_bg_block(x, y, d, desert)
+			if atlas != Vector2i(-1,-1):
+				fd[(y + ENCODE_Y_OFFSET) * 100000 + lx] = atlas
+
+func _generate_far_surface_heights_wide(total_cols: int) -> Array[int]:
+	var out:     Array[int]      = []
+	out.resize(total_cols)
+	var horizon: float           = float(surface_mid_y) - float(terrain_amplitude) * 0.35 + float(far_bg_y_offset)
+	var peak:    float           = float(terrain_amplitude) * far_bg_mountain_scale
+	var pts:     Array[Vector2i] = _generate_far_profile_points_wide(horizon, peak, total_cols)
+	if pts.size() < 2:
+		for x in total_cols: out[x] = int(horizon)
+		return out
+	var seg: int = 0
+	for x in total_cols:
+		while seg < pts.size() - 2 and x > pts[seg + 1].x:
+			seg += 1
+		var a: Vector2i = pts[seg]
+		var b: Vector2i = pts[min(seg + 1, pts.size() - 1)]
+		var t: float    = 0.0 if b.x == a.x else clamp(float(x - a.x) / float(b.x - a.x), 0.0, 1.0)
+		out[x] = int(lerp(float(a.y), float(b.y), t))
+	out = _smooth_surface_heights(out, far_bg_smooth_radius)
+	out = _apply_far_cliff_regions(out, horizon, peak)
+	out = _apply_far_cliff_features(out)
+	var step: float = float(max(1, far_bg_cliff_step_tiles))
+	for x in out.size():
+		out[x] = int(floor(float(out[x]) / step) * step)
+	return out
+
+func _generate_far_profile_points_wide(horizon: float, peak: float, total_cols: int) -> Array[Vector2i]:
+	var pts:     Array[Vector2i] = [Vector2i(0, int(horizon))]
+	var x:       int   = 0
+	var y:       int   = int(horizon)
+	var heading: float = -1.0
+	while x < total_cols:
+		var sw:  int   = _rng.randi_range(42, 96)
+		var nx:  int   = min(total_cols - 1, x + sw)
+		if nx <= x: break
+		var tx:   float = float(nx)
+		var mp:   float = (_far_primary_noise.get_noise_2d(tx, 0.0) + 1.0) * 0.5
+		var mv:   float = (_far_valley_noise.get_noise_2d(tx, 0.0) + 1.0) * 0.5
+		var drift:float = _far_secondary_noise.get_noise_2d(tx, 0.0) * peak * 0.14
+		var cb:   float = (0.32 + mp * 0.50) * peak
+		var db:   float = (1.0 - mv) * peak * (far_valley_bias + 0.16)
+		if _rng.randf() < 0.12: heading *= -1.0
+		var ty:   float = float(y) + heading * float(_rng.randi_range(5, 12)) - cb * 0.24 + db * 0.30 + drift
+		y = int(clamp(ty, horizon - peak, horizon + peak * 0.45))
+		pts.append(Vector2i(nx, y))
+		x = nx
+	return pts
+
+# ---------------------------------------------------------------------------
+# FAR BACKGROUND CHUNK STREAMING  (main thread)
+# Far tiles are placed in far-tile coordinates. Because the TileMapLayer has
+# scale = FAR_SCALE, each tile is rendered at FAR_SCALE * 32 px in world space.
+# The layers are offset so the playable section sits in the center of the wider
+# extended background.
+# ---------------------------------------------------------------------------
+func _update_far_loaded_chunks(player_far_chunk: int) -> void:
+	if _far_chunk_data.is_empty():
+		return
+	var nc: int = _far_chunk_data.size()
+	for cx in range(max(0, player_far_chunk - FAR_LOAD_RADIUS),
+	                min(nc,  player_far_chunk + FAR_LOAD_RADIUS + 1)):
+		if not _far_loaded_chunks.has(cx):
+			_load_far_chunk(cx)
+	var to_unload: Array = []
+	for cx in _far_loaded_chunks.keys():
+		if abs(cx - player_far_chunk) > FAR_UNLOAD_RADIUS:
+			to_unload.append(cx)
+	for cx in to_unload:
+		_unload_far_chunk(cx)
+
+func _load_far_chunk(chunk_x: int) -> void:
+	if chunk_x < 0 or chunk_x >= _far_chunk_data.size():
+		return
+	var data:    Dictionary = _far_chunk_data[chunk_x]
+	var x_start: int = chunk_x * FAR_CHUNK_WIDTH
+	_write_far_layer_cells(_far_background_front, data["front"], x_start)
+	_write_far_layer_cells(_far_background_back,  data["back"],  x_start)
+	_far_loaded_chunks[chunk_x] = true
+	# Debug: confirm tiles are actually in the tilemap after writing
+	if _far_background_front != null:
+		var used: Array = _far_background_front.get_used_cells()
+		if used.size() > 0:
+			var c: Vector2i = used[0]
+			var wp: Vector2 = _far_background_front.map_to_local(c)
+
+func _unload_far_chunk(chunk_x: int) -> void:
+	var x_start:  int = chunk_x * FAR_CHUNK_WIDTH
+	var world_top:int = surface_mid_y - terrain_amplitude - 80
+	var world_bot:int = surface_mid_y + int(float(terrain_amplitude) * 0.15) + 2
+	for x in range(x_start, x_start + FAR_CHUNK_WIDTH):
+		for y in range(world_top, world_bot):
+			var cell: Vector2i = Vector2i(x, y)
+			if _far_background_front != null: _far_background_front.erase_cell(cell)
+			if _far_background_back  != null: _far_background_back.erase_cell(cell)
+	_far_loaded_chunks.erase(chunk_x)
+
+func _write_far_layer_cells(layer: TileMapLayer, cells: Dictionary, x_start: int) -> void:
+	if layer == null:
+		return
+	for encoded: int in cells.keys():
+		var local_x: int     = encoded % 100000
+		var y:       int     = encoded / 100000 - ENCODE_Y_OFFSET
+		var atlas:   Vector2i = cells[encoded]
+		layer.set_cell(Vector2i(x_start + local_x, y), tilemap_source_id, atlas)
+
+func _world_x_to_far_chunk(world_x_pixels: float) -> int:
+	if _far_total_width <= 0 or _far_chunk_data.is_empty():
+		return 0
+	# Convert world pixel x to far-tile x (accounting for offset and scale)
+	var offset:    int   = (_far_total_width - world_width) / 2
+	var far_tile_x:int   = int(world_x_pixels / (32.0 * FAR_SCALE)) + offset
+	var nc:        int   = _far_chunk_data.size()
+	return clamp(far_tile_x / FAR_CHUNK_WIDTH, 0, nc - 1)
+
 # ---------------------------------------------------------------------------
 # SPAWN PLATFORM  (written directly on main thread after thread finishes)
 # ---------------------------------------------------------------------------
 func _carve_spawn_platform() -> void:
 	if _surface_heights.is_empty():
 		return
-	var spawn_x:  int = 0
+	# Default spawn is the center of the world so the player is never on a chunk edge.
+	var spawn_x: int = (world_width / 2) if spawn_tile_x < 0 else clamp(spawn_tile_x, 0, world_width - 1)
 	var target_y: int = _surface_heights[spawn_x]
 	var half_w:   int = 3
 	for x in range(max(0, spawn_x - half_w), min(world_width, spawn_x + half_w + 1)):
@@ -950,6 +1130,18 @@ func _carve_spawn_platform() -> void:
 			for y in range(target_y + 1, col_y):
 				_main.set_cell(Vector2i(x, y), tilemap_source_id, _c_dirt)
 			_main.set_cell(Vector2i(x, target_y), tilemap_source_id, _c_grass)
+	# Store the exact world-pixel spawn position so main.gd can place the player.
+	# Player should stand ON the surface tile, so y is one tile above target_y.
+	# target_y is the tile row of the surface block.
+	# Top edge of that tile in pixels = target_y * 32.
+	# Place the player origin just above that so physics lands them cleanly.
+	# Using target_y * 32 - 1 gives a 1px gap above the surface — enough for
+	# CharacterBody2D to detect the floor on the first physics frame.
+	spawn_world_position = Vector2(
+		float(spawn_x) * 32.0 + 16.0,  # horizontally centered on spawn tile
+		float(target_y) * 32.0 - 1.0   # 1px above surface tile top edge
+	)
+	print("WorldGen: spawn position = tile(%d,%d) world(%.0f,%.0f)" % [spawn_x, target_y, spawn_world_position.x, spawn_world_position.y])
 
 # ---------------------------------------------------------------------------
 # TREE HELPERS

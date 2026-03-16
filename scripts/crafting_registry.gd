@@ -470,8 +470,8 @@ func _get_filled_bounds(grid_items: Array, grid_size: int) -> Dictionary:
 	for i in grid_items.size():
 		if (grid_items[i] as String) == "":
 			continue
-		var r := i / grid_size
-		var c := i % grid_size
+		var r := int(i / grid_size)
+		var c := int(i % grid_size)
 		min_r = min(min_r, r)
 		max_r = max(max_r, r)
 		min_c = min(min_c, c)
