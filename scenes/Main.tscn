@@ -27,13 +27,28 @@ crafting_table_ui = NodePath("../../Crafting Table/Control")
 furnace_ui = NodePath("../../Furnace/Control")
 anvil_ui = NodePath("../../Anvil/Control")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1240095964 groups=["layer_main"]]
+[node name="Main Layer" type="TileMapLayer" parent="." unique_id=1240095964 groups=["layer_main"]]
 
-[node name="TileMapLayer2" type="TileMapLayer" parent="." unique_id=810248777 groups=["layer_object"]]
+[node name="Object Layer" type="TileMapLayer" parent="." unique_id=810248777 groups=["layer_object"]]
+modulate = Color(0.6990122, 0.6990122, 0.6990122, 1)
+z_index = -10
 
-[node name="TileMapLayer3" type="TileMapLayer" parent="." unique_id=474354408 groups=["layer_back_wall"]]
+[node name="Wall Layer" type="TileMapLayer" parent="." unique_id=474354408 groups=["layer_back_wall"]]
+modulate = Color(0.34534797, 0.34534797, 0.34534797, 1)
+z_index = -20
+position = Vector2(0, 1)
 
-[node name="TileMapLayer4" type="TileMapLayer" parent="." unique_id=486006339 groups=["layer_background"]]
+[node name="Background Layer" type="TileMapLayer" parent="." unique_id=486006339 groups=["layer_background"]]
+modulate = Color(0.2817484, 0.2817484, 0.2817484, 1)
+z_index = -40
+
+[node name="Far Background Layer" type="TileMapLayer" parent="." unique_id=568430350 groups=["layer_far_background_front"]]
+modulate = Color(0.2817484, 0.2817484, 0.2817484, 1)
+z_index = -50
+
+[node name="Far Background Layer2" type="TileMapLayer" parent="." unique_id=1359455514 groups=["layer_far_background_back"]]
+modulate = Color(0.2817484, 0.2817484, 0.2817484, 1)
+z_index = -60
 
 [node name="LoadingScreen" type="CanvasLayer" parent="." unique_id=1335275871 groups=["loading_screen"]]
 layer = 10

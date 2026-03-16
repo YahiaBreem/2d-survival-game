@@ -45,6 +45,8 @@ loading_screen=""
 loading_label=""
 death_screen=""
 death_label=""
+layer_far_background_front=""
+layer_far_background_back=""
 
 [gui]
 
