@@ -17,6 +17,12 @@ size = Vector2(8, 63)
 
 [node name="Player" type="CharacterBody2D" unique_id=632806575 groups=["player"]]
 script = ExtResource("1_p0vlq")
+walk_speed = 180.0
+sprint_speed = 260.0
+acceleration = 1200.0
+ground_friction = 1400.0
+fall_gravity = 1800.0
+jump_force = -280.0
 head_turn_speed = 15.0
 
 [node name="Visual" type="Node2D" parent="." unique_id=944193372]

@@ -246,7 +246,10 @@ const BLOCKS: Dictionary = {
 	},
 	"Oak Leaves": {
 		"hardness":     0.2,
-		"drop":         {"item": "Stick", "min": 0, "max": 1},
+		"drop":         [
+			{"item": "Stick", "min": 0, "max": 1},
+			{"item": "Apple", "min": 1, "max": 1, "chance": 0.005},
+		],
 		"stack":        64,
 		"tool":         ["Shears", 0],
 		"blast_resist": 0.0,
@@ -258,7 +261,9 @@ const BLOCKS: Dictionary = {
 	},
 	"Jungle Leaves": {
 		"hardness":     0.2,
-		"drop":         {"item": "Stick", "min": 0, "max": 1},
+		"drop":         [
+			{"item": "Stick", "min": 0, "max": 1},
+		],
 		"stack":        64,
 		"tool":         ["Shears", 0],
 		"blast_resist": 0.0,
@@ -270,7 +275,10 @@ const BLOCKS: Dictionary = {
 	},
 	"Dark Oak Leaves": {
 		"hardness":     0.2,
-		"drop":         {"item": "Stick", "min": 0, "max": 1},
+		"drop":         [
+			{"item": "Stick", "min": 0, "max": 1},
+			{"item": "Apple", "min": 1, "max": 1, "chance": 0.005},
+		],
 		"stack":        64,
 		"tool":         ["Shears", 0],
 		"blast_resist": 0.0,
@@ -282,7 +290,9 @@ const BLOCKS: Dictionary = {
 	},
 	"Birch Leaves": {
 		"hardness":     0.2,
-		"drop":         {"item": "Stick", "min": 0, "max": 1},
+		"drop":         [
+			{"item": "Stick", "min": 0, "max": 1},
+		],
 		"stack":        64,
 		"tool":         ["Shears", 0],
 		"blast_resist": 0.0,
@@ -294,7 +304,9 @@ const BLOCKS: Dictionary = {
 	},
 	"Spruce Leaves": {
 		"hardness":     0.2,
-		"drop":         {"item": "Stick", "min": 0, "max": 1},
+		"drop":         [
+			{"item": "Stick", "min": 0, "max": 1},
+		],
 		"stack":        64,
 		"tool":         ["Shears", 0],
 		"blast_resist": 0.0,
@@ -306,7 +318,9 @@ const BLOCKS: Dictionary = {
 	},
 	"Acacia Leaves": {
 		"hardness":     0.2,
-		"drop":         {"item": "Stick", "min": 0, "max": 1},
+		"drop":         [
+			{"item": "Stick", "min": 0, "max": 1},
+		],
 		"stack":        64,
 		"tool":         ["Shears", 0],
 		"blast_resist": 0.0,
@@ -673,7 +687,10 @@ func _resolve_drop_entry(entry) -> Array:
 			results.append({"item": entry, "count": 1})
 
 	elif typeof(entry) == TYPE_DICTIONARY:
-		# { "item": "...", "min": N, "max": M }
+		# { "item": "...", "min": N, "max": M, "chance": 0.0-1.0 (optional) }
+		var chance: float = entry.get("chance", 1.0)
+		if randf() > chance:
+			return results
 		var item:  String = entry.get("item", "")
 		var min_c: int    = entry.get("min", 1)
 		var max_c: int    = entry.get("max", min_c)

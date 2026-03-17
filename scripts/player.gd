@@ -1,213 +1,236 @@
 extends CharacterBody2D
 
-# ---------------------------------------------------------------------------
-# MINECRAFT-STYLE MOVEMENT
-#
-# Key characteristics:
-#   - Instant direction change on ground (no acceleration, snap to speed)
-#   - Very quick stop on ground (high friction, not instant)
-#   - Almost zero air control — you commit to your jump direction
-#   - Fixed jump height, no variable jump (no jump cut)
-#   - Fast falling gravity — falls feel weighty
-#   - Terminal velocity cap
-#   - No coyote time, no jump buffer — simple and direct like Minecraft
-# ---------------------------------------------------------------------------
+# --------------------
+# SPEED
+# --------------------
+@export var walk_speed:         float = 220.0
+@export var sprint_speed:       float = 300.0
+@export var acceleration:       float = 800.0
+@export var air_acceleration:   float = 300.0
+@export var ground_friction:    float = 900.0
+## Seconds between two taps to trigger sprint
+@export var double_tap_window:  float = 0.25
+## Horizontal speed multiplier when jumping while sprinting
+@export var sprint_jump_boost:  float = 1.3
 
-@export_group("Movement")
-@export var walk_speed: float     = 220.0   # horizontal speed on ground
-@export var ground_friction: float = 1600.0  # how quickly you stop on ground
-@export var air_speed: float      = 220.0   # max horizontal speed in air
-@export var air_accel: float      = 180.0   # very low — almost no air control
+# --------------------
+# GRAVITY / JUMP
+# --------------------
+@export var gravity:              float = 900.0
+@export var fall_gravity:         float = 1100.0
+@export var jump_force:           float = -420.0
+@export var terminal_velocity:    float = 1400.0
+## How long the jump button can be held to extend height (seconds)
+@export var jump_hold_duration:   float = 0.20
+## Extra upward force applied each frame while holding jump
+@export var jump_hold_force:      float = 600.0
 
-@export_group("Jump & Gravity")
-@export var jump_force: float       = -340.0  # fixed jump velocity (no variable height)
-@export var gravity: float          = 1200.0  # base gravity
-@export var fall_gravity: float     = 1800.0  # stronger gravity when falling — snappy landing
-@export var terminal_velocity: float = 1000.0  # max fall speed
-
-@export_group("Damage")
-# Minimum downward velocity on landing that starts dealing fall damage.
-# Tuned so damage starts around 6+ blocks of freefall at current gravity.
+# --------------------
+# DAMAGE
+# --------------------
 @export var fall_damage_threshold: float = 820.0
-# How many hearts of damage per 100 px/s above the threshold.
-@export var fall_damage_scale: float     = 0.02    # damage = excess * scale
+@export var fall_damage_scale:     float = 0.02
+@export var cactus_damage_interval:float = 0.5
 
-# Seconds between cactus damage ticks (Minecraft: 0.5s)
-@export var cactus_damage_interval: float = 0.5
-
-@export_group("Visual")
+# --------------------
+# VISUAL
+# --------------------
 @export var head_turn_speed: float = 18.0
 
-@onready var visual: Node2D        = $Visual as Node2D
-@onready var head: Node2D          = $Visual/Head as Node2D
+@onready var visual: Node2D = $Visual as Node2D
+@onready var head:   Node2D = $Visual/Head as Node2D
 
-# ---------------------------------------------------------------------------
+# --------------------
 # INTERNAL STATE
-# ---------------------------------------------------------------------------
-var _prev_fall_velocity: float = 0.0   # velocity.y on the frame before landing
-var _was_on_floor:       bool  = false # floor state from last frame
-var _cactus_timer:       float = 0.0   # cooldown between cactus damage ticks
+# --------------------
+var _was_on_floor:   bool  = false
+var _cactus_timer:   float = 0.0
+var _jump_hold_time: float = 0.0   # how long jump has been held this airtime
+var _is_jumping:     bool  = false  # true while holding jump after leaving floor
 
-# ---------------------------------------------------------------------------
-func _ready() -> void:
-	assert(visual != null, "Visual node not found under Player")
-	assert(head != null,   "Head node not found under Player/Visual")
+# Sprint double-tap detection
+var _is_sprinting:        bool  = false
+var _last_tap_direction:  float = 0.0   # direction of last tap (-1 or 1)
+var _last_tap_time:       float = 0.0   # time of last tap
+var _double_tap_window:   float = 0.25  # seconds allowed between taps
 
-# ---------------------------------------------------------------------------
+# Sprint jump boost
+var _sprint_jump_boost:   float = 1.3   # multiplier on horizontal speed during sprint jump
+
+# --------------------
+# MAIN
+# --------------------
 func _physics_process(delta: float) -> void:
-	# Store downward velocity BEFORE move_and_slide resolves the collision.
-	# This is the "impact velocity" we use for fall damage.
-	var velocity_before_slide: float = velocity.y
+	var velocity_before: float = velocity.y
 
 	_apply_gravity(delta)
-	_handle_jump()
+	_handle_sprint(delta)
+	_handle_jump(delta)
 	_handle_horizontal(delta)
 	move_and_slide()
 	_update_facing_and_head(delta)
 
-	if visual.has_method("update_animation"):
+	if visual != null and visual.has_method("update_animation"):
 		visual.update_animation(velocity, is_on_floor(), delta)
 
-	# --- Damage checks (after move_and_slide so collisions are resolved) ---
-	_check_fall_damage(velocity_before_slide)
+	_check_fall_damage(velocity_before)
 	_check_cactus_damage(delta)
 
-# ---------------------------------------------------------------------------
+# --------------------
+# GRAVITY
+# --------------------
 func _apply_gravity(delta: float) -> void:
 	if is_on_floor():
 		if velocity.y > 0.0:
 			velocity.y = 0.0
 		return
 	var grav: float = fall_gravity if velocity.y > 0.0 else gravity
-	velocity.y += grav * delta
-	velocity.y  = min(velocity.y, terminal_velocity)
+	velocity.y = min(velocity.y + grav * delta, terminal_velocity)
 
-# ---------------------------------------------------------------------------
-func _handle_jump() -> void:
+# --------------------
+# JUMP  (holdable — Minecraft style)
+# --------------------
+func _handle_jump(delta: float) -> void:
+	# Initial jump — only on the frame we hit the floor
 	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y = jump_force
+		velocity.y      = jump_force
+		_is_jumping     = true
+		_jump_hold_time = 0.0
+		# Sprint jump boost — extra horizontal momentum like Minecraft
+		if _is_sprinting and abs(velocity.x) > 10.0:
+			velocity.x *= sprint_jump_boost
 
-# ---------------------------------------------------------------------------
-func _handle_horizontal(delta: float) -> void:
+	# Clear jump state when we land
+	if is_on_floor():
+		_is_jumping     = false
+		_jump_hold_time = 0.0
+
+	# Hold to extend — only while still rising and within hold window
+	if _is_jumping and Input.is_action_pressed("jump"):
+		if _jump_hold_time < jump_hold_duration and velocity.y < 0.0:
+			velocity.y      -= jump_hold_force * delta
+			_jump_hold_time += delta
+		else:
+			_is_jumping = false
+
+	# Release early = short hop
+	if Input.is_action_just_released("jump"):
+		_is_jumping = false
+
+# --------------------
+# SPRINT  (double-tap to start, stop on collision or idle)
+# --------------------
+func _handle_sprint(delta: float) -> void:
+	_last_tap_time += delta
+
+	var left_pressed:  bool = Input.is_action_just_pressed("move_left")
+	var right_pressed: bool = Input.is_action_just_pressed("move_right")
+
+	if left_pressed or right_pressed:
+		var tapped_dir: float = -1.0 if left_pressed else 1.0
+		# Double tap in the same direction within the window = start sprint
+		if tapped_dir == _last_tap_direction and _last_tap_time <= double_tap_window:
+			_is_sprinting = true
+		_last_tap_direction = tapped_dir
+		_last_tap_time      = 0.0
+
+	# Stop sprinting if direction reverses or no input
 	var direction: float = Input.get_axis("move_left", "move_right")
+	if direction == 0.0 and is_on_floor():
+		_is_sprinting = false
+	if _is_sprinting and direction != 0.0:
+		var moving_right: bool = velocity.x > 0.0
+		if (moving_right and direction < 0.0) or (not moving_right and direction > 0.0):
+			_is_sprinting = false
+
+# --------------------
+# HORIZONTAL
+# --------------------
+func _handle_horizontal(delta: float) -> void:
+	var direction:    float = Input.get_axis("move_left", "move_right")
+	var target_speed: float = sprint_speed if _is_sprinting else walk_speed
 
 	if is_on_floor():
 		if direction != 0.0:
-			velocity.x = direction * walk_speed
+			velocity.x = move_toward(velocity.x, direction * target_speed, acceleration * delta)
 		else:
 			velocity.x = move_toward(velocity.x, 0.0, ground_friction * delta)
+			# Stop sprinting when the player stops moving
+			if abs(velocity.x) < 5.0:
+				_is_sprinting = false
 	else:
+		# In air: cap to current target speed, no extra acceleration boost
+		var air_cap: float = target_speed
 		if direction != 0.0:
-			velocity.x = move_toward(velocity.x, direction * air_speed, air_accel * delta)
+			velocity.x = move_toward(velocity.x, direction * air_cap, air_acceleration * delta)
 
-# ---------------------------------------------------------------------------
-# FALL DAMAGE
-# Triggered the exact frame the player lands (was airborne, now on floor).
-# Uses the velocity captured BEFORE move_and_slide zeroes it out.
-# ---------------------------------------------------------------------------
-func _check_fall_damage(velocity_before: float) -> void:
-	var just_landed: bool = is_on_floor() and not _was_on_floor
-	_was_on_floor = is_on_floor()
-
-	if not just_landed:
-		return
-
-	# velocity_before is positive when falling down
-	if velocity_before <= fall_damage_threshold:
-		return
-
-	var excess: float = velocity_before - fall_damage_threshold
-	var damage: int   = max(1, int(excess * fall_damage_scale))
-	PlayerStats.take_damage(damage)
-
-# ---------------------------------------------------------------------------
-# CACTUS DAMAGE
-# After move_and_slide, iterate over all collisions this frame.
-# If any colliding body is a TileMapLayer, check the block name at the
-# contact point. If it has "damage" > 0 in BlockRegistry, deal damage
-# on a cooldown timer.
-# ---------------------------------------------------------------------------
-func _check_cactus_damage(delta: float) -> void:
-	# Tick the cooldown regardless so it drains while not touching cactus
-	if _cactus_timer > 0.0:
-		_cactus_timer -= delta
-
-	var touching_damaging_block: bool = false
-
-	for i in get_slide_collision_count():
-		var col: KinematicCollision2D = get_slide_collision(i)
-		if col == null:
-			continue
-
-		var collider: Object = col.get_collider()
-		if not (collider is TileMapLayer):
-			continue
-
-		var tilemap: TileMapLayer = collider as TileMapLayer
-
-		# Convert the collision contact point to a tile cell.
-		# Nudge the point slightly inward along the collision normal
-		# so it lands inside the tile rather than on the edge seam.
-		var contact: Vector2  = col.get_position()
-		var normal:  Vector2  = col.get_normal()
-		var nudged:  Vector2  = contact - normal * 2.0   # 2px inside the tile
-		var cell:    Vector2i = tilemap.local_to_map(tilemap.to_local(nudged))
-
-		var atlas_coords: Vector2i = tilemap.get_cell_atlas_coords(cell)
-		if atlas_coords == Vector2i(-1, -1):
-			continue
-
-		var block_name: String = BlockRegistry.get_name_from_coords(atlas_coords)
-		var damage: int        = BlockRegistry.get_contact_damage(block_name)
-
-		if damage > 0:
-			touching_damaging_block = true
-			break
-
-	if touching_damaging_block and _cactus_timer <= 0.0:
-		# Deal damage and reset the cooldown
-		var block_damage: int = _get_highest_contact_damage()
-		PlayerStats.take_damage(block_damage)
-		_cactus_timer = cactus_damage_interval
-
-# ---------------------------------------------------------------------------
-# Returns the highest contact_damage value among all currently colliding
-# damaging blocks. Called only when we know at least one exists.
-# ---------------------------------------------------------------------------
-func _get_highest_contact_damage() -> int:
-	var highest: int = 0
-	for i in get_slide_collision_count():
-		var col: KinematicCollision2D = get_slide_collision(i)
-		if col == null:
-			continue
-		var collider: Object = col.get_collider()
-		if not (collider is TileMapLayer):
-			continue
-		var tilemap: TileMapLayer = collider as TileMapLayer
-		var contact: Vector2      = col.get_position()
-		var normal:  Vector2      = col.get_normal()
-		var nudged:  Vector2      = contact - normal * 2.0
-		var cell:    Vector2i     = tilemap.local_to_map(tilemap.to_local(nudged))
-		var atlas:   Vector2i     = tilemap.get_cell_atlas_coords(cell)
-		if atlas == Vector2i(-1, -1):
-			continue
-		var name:   String = BlockRegistry.get_name_from_coords(atlas)
-		var damage: int    = BlockRegistry.get_contact_damage(name)
-		if damage > highest:
-			highest = damage
-	return highest
-
-# ---------------------------------------------------------------------------
+# --------------------
+# FACING / HEAD
+# --------------------
 func _update_facing_and_head(delta: float) -> void:
+	if visual == null or head == null:
+		return
 	var mouse_world: Vector2 = get_global_mouse_position()
+	var to_mouse:    Vector2 = mouse_world - global_position
 
-	var to_mouse: Vector2 = mouse_world - global_position
 	if abs(to_mouse.x) > 0.001:
 		visual.scale.x = 1.0 if to_mouse.x > 0.0 else -1.0
 
-	var dir: Vector2  = mouse_world - head.global_position
-	var target: float = head.get_parent().get_global_transform().basis_xform_inv(dir).angle()
-	var limit: float  = deg_to_rad(90.0)
-	target            = clamp(target, -limit, limit)
-	var t: float      = clamp(head_turn_speed * delta, 0.0, 1.0)
-	head.rotation     = lerp_angle(head.rotation, target, t)
+	var dir:    Vector2 = mouse_world - head.global_position
+	var target: float   = head.get_parent().get_global_transform().basis_xform_inv(dir).angle()
+	target = clamp(target, deg_to_rad(-90.0), deg_to_rad(90.0))
+	head.rotation = lerp_angle(head.rotation, target, clamp(head_turn_speed * delta, 0.0, 1.0))
+
+# --------------------
+# FALL DAMAGE
+# --------------------
+func _check_fall_damage(velocity_before: float) -> void:
+	var just_landed: bool = is_on_floor() and not _was_on_floor
+	_was_on_floor = is_on_floor()
+	if not just_landed:
+		return
+	if velocity_before <= fall_damage_threshold:
+		return
+	var excess: float = velocity_before - fall_damage_threshold
+	PlayerStats.take_damage(max(1, int(excess * fall_damage_scale)))
+
+# --------------------
+# CACTUS / CONTACT DAMAGE
+# --------------------
+func _check_cactus_damage(delta: float) -> void:
+	if _cactus_timer > 0.0:
+		_cactus_timer -= delta
+
+	var touching: bool = false
+	for i in get_slide_collision_count():
+		var col: KinematicCollision2D = get_slide_collision(i)
+		if col == null: continue
+		var collider: Object = col.get_collider()
+		if not (collider is TileMapLayer): continue
+		var tilemap: TileMapLayer = collider as TileMapLayer
+		var contact: Vector2  = col.get_position()
+		var normal:  Vector2  = col.get_normal()
+		var cell:    Vector2i = tilemap.local_to_map(tilemap.to_local(contact - normal * 2.0))
+		var atlas:   Vector2i = tilemap.get_cell_atlas_coords(cell)
+		if atlas == Vector2i(-1, -1): continue
+		if BlockRegistry.get_contact_damage(BlockRegistry.get_name_from_coords(atlas)) > 0:
+			touching = true
+			break
+
+	if touching and _cactus_timer <= 0.0:
+		var highest: int = 0
+		for i in get_slide_collision_count():
+			var col: KinematicCollision2D = get_slide_collision(i)
+			if col == null: continue
+			var collider: Object = col.get_collider()
+			if not (collider is TileMapLayer): continue
+			var tilemap: TileMapLayer = collider as TileMapLayer
+			var contact: Vector2  = col.get_position()
+			var normal:  Vector2  = col.get_normal()
+			var cell:    Vector2i = tilemap.local_to_map(tilemap.to_local(contact - normal * 2.0))
+			var atlas:   Vector2i = tilemap.get_cell_atlas_coords(cell)
+			if atlas == Vector2i(-1, -1): continue
+			var dmg: int = BlockRegistry.get_contact_damage(BlockRegistry.get_name_from_coords(atlas))
+			if dmg > highest: highest = dmg
+		PlayerStats.take_damage(highest)
+		_cactus_timer = cactus_damage_interval

@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://bn6gf3ts6espc" path="res://assets/Textures/gui/hotbar.png" id="9_yxlcp"]
 [ext_resource type="Script" uid="uid://bnfym47bap42a" path="res://scripts/stats_hud.gd" id="10_ebg2g"]
 [ext_resource type="Texture2D" uid="uid://1q00ta86ele6" path="res://assets/Textures/gui/icons.png" id="11_2ofn6"]
+[ext_resource type="Script" uid="uid://c6v3mphmeggwh" path="res://scenes/debug_menu.gd" id="13_qmy6f"]
 [ext_resource type="Texture2D" uid="uid://cmwnehsf8rvlv" path="res://assets/Textures/blocks/destroy_indicate.png" id="17_ft6cd"]
 
 [node name="Node2D" type="Node2D" unique_id=336726014 groups=["main"]]
@@ -116,5 +117,9 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("10_ebg2g")
 stats_texture = ExtResource("11_2ofn6")
+
+[node name="Debug Menu" type="CanvasLayer" parent="." unique_id=377488123]
+layer = 100
+script = ExtResource("13_qmy6f")
 
 [editable path="Player"]

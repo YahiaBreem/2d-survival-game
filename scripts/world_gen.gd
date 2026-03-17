@@ -1137,9 +1137,19 @@ func _carve_spawn_platform() -> void:
 	# Place the player origin just above that so physics lands them cleanly.
 	# Using target_y * 32 - 1 gives a 1px gap above the surface — enough for
 	# CharacterBody2D to detect the floor on the first physics frame.
+	# Scan downward from world top to find the actual highest solid tile at spawn_x.
+	# This is more reliable than surface_heights which can change after lake/platform edits.
+	var world_top_scan: int  = surface_mid_y - terrain_amplitude - 20
+	var highest_solid_y: int = target_y
+	for scan_y in range(world_top_scan, _world_bottom()):
+		if _main.get_cell_source_id(Vector2i(spawn_x, scan_y)) != -1:
+			highest_solid_y = scan_y
+			break
+	# Place 2 tiles (64px) above the highest solid block so the player
+	# never spawns inside terrain regardless of collision shape origin.
 	spawn_world_position = Vector2(
-		float(spawn_x) * 32.0 + 16.0,  # horizontally centered on spawn tile
-		float(target_y) * 32.0 - 1.0   # 1px above surface tile top edge
+		float(spawn_x) * 32.0 + 16.0,
+		float(highest_solid_y) * 32.0 - 64.0
 	)
 	print("WorldGen: spawn position = tile(%d,%d) world(%.0f,%.0f)" % [spawn_x, target_y, spawn_world_position.x, spawn_world_position.y])
 
