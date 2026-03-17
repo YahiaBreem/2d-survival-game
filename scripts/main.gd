@@ -11,6 +11,9 @@ extends Node2D
 @export_group("Respawn")
 @export var respawn_delay: float = 3.0
 
+@export_group("Mobs")
+@export var cow_scene: PackedScene
+
 var _layer_bg:           Node2D          = null
 var _layer_far_bg_front: Node2D          = null
 var _layer_far_bg_back:  Node2D          = null
@@ -133,9 +136,26 @@ func on_world_ready() -> void:
 	# Place player at correct spawn and unfreeze
 	_unfreeze_player()
 
+	# Register mob spawns — world is ready so tilemap is populated
+	_register_spawns()
+
 	# Hide loading screen
 	if _loading_screen != null:
 		_loading_screen.visible = false
+
+func _register_spawns() -> void:
+	if cow_scene == null:
+		push_warning("Main: cow_scene not assigned in Inspector — no cows will spawn.")
+		return
+	MobSpawner.register(cow_scene, {
+		"max":            8,
+		"interval":       15.0,
+		"valid_tiles":    ["Grass"],
+		"spawn_dist_min": 200.0,
+		"spawn_dist_max": 600.0,
+		"group":          "cows",
+	})
+	print("Main: mob spawns registered.")
 
 func _on_generation_complete(_seed_val: int, _world_w: int, _mtn_far: Array, _mtn_near: Array) -> void:
 	pass  # kept for signal compatibility — logic is in on_world_ready

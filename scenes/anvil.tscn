@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d2uu27jqlokh2"]
 
-[ext_resource type="Script" uid="uid://cjt4be5m7ybke" path="res://scripts/anvil_ui.gd" id="1_dnwij"]
+[ext_resource type="Script" uid="uid://bkbx31mv4xuw2" path="res://scripts/gui/anvil_ui.gd" id="1_dnwij"]
 [ext_resource type="Texture2D" uid="uid://djcs2c5o42fit" path="res://assets/Textures/gui/anvil.png" id="1_wf6o5"]
 
 [node name="Control" type="Control" unique_id=280099997]

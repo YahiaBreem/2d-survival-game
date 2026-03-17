@@ -17,14 +17,15 @@ config/icon="uid://dl3sq54vlvy38"
 
 [autoload]
 
-BlockRegistry="*uid://7g6yae6ebqj4"
-ItemRegistry="*uid://sdj173psfp3e"
-CraftingRegistry="*uid://b867jumrf2lxe"
+BlockRegistry="*uid://dmx7atjk4k2j5"
+ItemRegistry="*uid://bcg0ywhhh7q4s"
+CraftingRegistry="*uid://b87wgaatmkqoo"
 PhysicsManager="*uid://dwbcik3omixvn"
 TileSetBuilder="*uid://cxlj55mts1skm"
-Inventory="*uid://dj71v641j33y6"
-PlayerStats="*uid://5qmwtqav72dl"
-CursorManager="*uid://c7jvrsuc5nnue"
+Inventory="*uid://do1bw776f4rr8"
+PlayerStats="*uid://dj143sw8mfsf8"
+CursorManager="*uid://otj7ukjo0bwq"
+MobSpawner="*uid://cxaj0584h53na"
 
 [display]
 

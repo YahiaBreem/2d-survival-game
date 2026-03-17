@@ -1,21 +1,23 @@
 [gd_scene format=3 uid="uid://hxupdvupp1bx"]
 
 [ext_resource type="Script" uid="uid://3ckc0l0hsnnd" path="res://scripts/main.gd" id="1_elqb8"]
+[ext_resource type="PackedScene" uid="uid://dyhinpiecs3rm" path="res://scenes/Cow.tscn" id="2_mwfav"]
 [ext_resource type="Script" uid="uid://cq48bvhgvh75w" path="res://scripts/world_gen.gd" id="2_vcsgt"]
 [ext_resource type="PackedScene" uid="uid://d10wy5c5rnn4l" path="res://scenes/Player.tscn" id="3_bjd11"]
 [ext_resource type="PackedScene" uid="uid://3k4x2sbg27va" path="res://scenes/furnace.tscn" id="3_nfivy"]
 [ext_resource type="PackedScene" uid="uid://d2uu27jqlokh2" path="res://scenes/anvil.tscn" id="4_1nqs0"]
 [ext_resource type="PackedScene" uid="uid://bjjty4bon8amv" path="res://scenes/inventory.tscn" id="4_rarhs"]
 [ext_resource type="PackedScene" uid="uid://brhhk6wuhyilj" path="res://scenes/crafting_table.tscn" id="6_qmy6f"]
-[ext_resource type="Script" uid="uid://k0r6rl1k2sdo" path="res://scripts/hotbar_hud.gd" id="8_1iba3"]
 [ext_resource type="Texture2D" uid="uid://bn6gf3ts6espc" path="res://assets/Textures/gui/hotbar.png" id="9_yxlcp"]
-[ext_resource type="Script" uid="uid://bnfym47bap42a" path="res://scripts/stats_hud.gd" id="10_ebg2g"]
 [ext_resource type="Texture2D" uid="uid://1q00ta86ele6" path="res://assets/Textures/gui/icons.png" id="11_2ofn6"]
-[ext_resource type="Script" uid="uid://c6v3mphmeggwh" path="res://scenes/debug_menu.gd" id="13_qmy6f"]
+[ext_resource type="Script" uid="uid://cfvc3a7lx6cvc" path="res://scripts/debug_menu.gd" id="12_bjd11"]
+[ext_resource type="Script" uid="uid://dmvydj65sbsrr" path="res://scripts/gui/hotbar_hud.gd" id="14_1nqs0"]
+[ext_resource type="Script" uid="uid://xsq7b4fk6s52" path="res://scripts/gui/stats_hud.gd" id="15_1iba3"]
 [ext_resource type="Texture2D" uid="uid://cmwnehsf8rvlv" path="res://assets/Textures/blocks/destroy_indicate.png" id="17_ft6cd"]
 
 [node name="Node2D" type="Node2D" unique_id=336726014 groups=["main"]]
 script = ExtResource("1_elqb8")
+cow_scene = ExtResource("2_mwfav")
 
 [node name="WorldGen" type="Node" parent="." unique_id=1089963073 groups=["world_gen"]]
 script = ExtResource("2_vcsgt")
@@ -107,7 +109,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-script = ExtResource("8_1iba3")
+script = ExtResource("14_1nqs0")
 hotbar_texture = ExtResource("9_yxlcp")
 
 [node name="StatsHUD" type="Control" parent="Hotbar" unique_id=484491191]
@@ -115,11 +117,11 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-script = ExtResource("10_ebg2g")
+script = ExtResource("15_1iba3")
 stats_texture = ExtResource("11_2ofn6")
 
 [node name="Debug Menu" type="CanvasLayer" parent="." unique_id=377488123]
 layer = 100
-script = ExtResource("13_qmy6f")
+script = ExtResource("12_bjd11")
 
 [editable path="Player"]

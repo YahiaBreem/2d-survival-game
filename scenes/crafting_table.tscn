@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://brhhk6wuhyilj"]
 
-[ext_resource type="Script" uid="uid://bidr3hk25k411" path="res://scripts/crafting_table_ui.gd" id="1_4xt1u"]
+[ext_resource type="Script" uid="uid://c4dmjlnomk6fl" path="res://scripts/gui/crafting_table_ui.gd" id="1_4xt1u"]
 [ext_resource type="Texture2D" uid="uid://nbjjggwpk4cm" path="res://assets/Textures/gui/crafting_table.png" id="1_87o7u"]
 
 [node name="Control" type="Control" unique_id=1562771931]

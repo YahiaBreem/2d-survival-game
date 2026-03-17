@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://3k4x2sbg27va"]
 
 [ext_resource type="Texture2D" uid="uid://2ilvk2jxfuo" path="res://assets/Textures/gui/furnace.png" id="1_0y7ne"]
-[ext_resource type="Script" uid="uid://cq3crg53klqt3" path="res://scripts/furnace_ui.gd" id="1_61l8k"]
+[ext_resource type="Script" uid="uid://cmaoap7bw3mtw" path="res://scripts/gui/furnace_ui.gd" id="1_61l8k"]
 
 [node name="Control" type="Control" unique_id=1166338188]
 layout_mode = 3

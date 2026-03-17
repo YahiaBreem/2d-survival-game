@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://d10wy5c5rnn4l"]
 
-[ext_resource type="Script" uid="uid://b7vqohdm1bsed" path="res://scripts/player.gd" id="1_p0vlq"]
-[ext_resource type="Script" uid="uid://d1ghtt2qmd6v7" path="res://scripts/player_model.gd" id="2_cw2d6"]
+[ext_resource type="Script" uid="uid://c8qdhoiiut3mq" path="res://scripts/entity/player/player.gd" id="1_d3wef"]
+[ext_resource type="Script" uid="uid://c3u2k6ndc6j03" path="res://scripts/entity/player/player_model.gd" id="2_o4126"]
 [ext_resource type="Texture2D" uid="uid://bwf826nej6iyb" path="res://assets/Textures/player/Body.png" id="3_d3wef"]
 [ext_resource type="Script" uid="uid://c0cywr2cqkhhx" path="res://scripts/block_interaction.gd" id="4_mdl7e"]
 [ext_resource type="Texture2D" uid="uid://cufdutbwm6vdm" path="res://assets/Textures/player/Front Arm.png" id="4_o4126"]
@@ -16,26 +16,19 @@
 size = Vector2(8, 63)
 
 [node name="Player" type="CharacterBody2D" unique_id=632806575 groups=["player"]]
-script = ExtResource("1_p0vlq")
-walk_speed = 180.0
-sprint_speed = 260.0
-acceleration = 1200.0
-ground_friction = 1400.0
-fall_gravity = 1800.0
-jump_force = -280.0
-head_turn_speed = 15.0
+script = ExtResource("1_d3wef")
 
 [node name="Visual" type="Node2D" parent="." unique_id=944193372]
-script = ExtResource("2_cw2d6")
+script = ExtResource("2_o4126")
 
 [node name="Body" type="Node2D" parent="Visual" unique_id=1281968598]
-z_index = 1
+z_index = 4
 
 [node name="Body" type="Sprite2D" parent="Visual/Body" unique_id=147979631]
 texture = ExtResource("3_d3wef")
 
 [node name="Front Arm" type="Node2D" parent="Visual" unique_id=1289554092]
-z_index = 2
+z_index = 7
 position = Vector2(0, -12)
 
 [node name="Front Arm" type="Sprite2D" parent="Visual/Front Arm" unique_id=854493982]
@@ -53,7 +46,7 @@ texture = ExtResource("5_lkdrv")
 offset = Vector2(0, 12)
 
 [node name="Front Leg" type="Node2D" parent="Visual" unique_id=455248493]
-z_index = 1
+z_index = 4
 position = Vector2(0, 12)
 
 [node name="Front Leg" type="Sprite2D" parent="Visual/Front Leg" unique_id=2020613968]
@@ -61,6 +54,7 @@ texture = ExtResource("6_p7iby")
 offset = Vector2(0, 12)
 
 [node name="Back Leg" type="Node2D" parent="Visual" unique_id=1413135505]
+z_index = 2
 position = Vector2(0, 12)
 
 [node name="Back Leg" type="Sprite2D" parent="Visual/Back Leg" unique_id=1517263636]
@@ -68,6 +62,7 @@ texture = ExtResource("7_0rnld")
 offset = Vector2(0, 12)
 
 [node name="Head" type="Node2D" parent="Visual" unique_id=859152064]
+z_index = 4
 position = Vector2(0, -12)
 
 [node name="Head" type="Sprite2D" parent="Visual/Head" unique_id=1959582528]
@@ -78,7 +73,6 @@ offset = Vector2(0, -8)
 zoom = Vector2(2, 2)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1605799205]
-visible = false
 position = Vector2(0, 4.5)
 shape = SubResource("RectangleShape2D_d3wef")
 debug_color = Color(0.85882354, 0, 0, 0.64705884)
